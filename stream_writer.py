@@ -9,6 +9,7 @@ cameras = {
 }
 
 readers = {}
+writers = {}
 
 # init readers
 for cam in cameras:
@@ -16,24 +17,29 @@ for cam in cameras:
     r = Reader(name=cam, src=cameras[cam], type="rtsp_stream",
                save_to_file=True, save_file="./data/archive/%s.mp4" % cam)
 
-    readers[cam] = r
+    readers[cam] = {"status": False, "r": r, "frame": None}
 
-
-# show frames
 while True:
+
+    i_can_write = False
 
     for cam in readers:
 
-        reader_out = readers[cam].get_frame()
+        reader_out = readers[cam]["r"].get_frame()
 
         if "error" in reader_out:
             print(get_format_date(), "##", cam, "##", "Error", reader_out["error"])
             status = {"error": reader_out["error"]}
+            readers[cam]["status"] = False
             continue
 
-        if reader_out["frame"] is None:
-            print(get_format_date(), "##", cam, "##", "None frame")
-            continue
+        readers[cam]["status"] = True
+        readers[cam]["frame"] = reader_out["frame"]
 
-        frame, frame_metadata = reader_out["frame"], reader_out["frame_meta"]
-        show_image(frame, win_name=cam, delay=1)
+    cams_status = {readers[x]["status"] for x in readers}
+
+    if False in cams_status:
+        continue
+
+    frame, frame_metadata = reader_out["frame"], reader_out["frame_meta"]
+    show_image(frame, win_name=cam, delay=1)

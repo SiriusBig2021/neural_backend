@@ -666,7 +666,7 @@ class Reader:
                         recorded_chunks += 1
                         if writer is not None:
                             writer.finish_writing()
-                        save_file_chunk = save_file.replace(".mp4", "_%s.mp4" % recorded_chunks)
+                        save_file_chunk = save_file.replace(".mp4", "%s_%s.mp4" % (get_format_date(), recorded_chunks))
                         writer = Writer(file_name=save_file_chunk, fps=fps, height=h, width=w)
 
                     writer.write_to_file(frame)
