@@ -13,10 +13,15 @@ readers = {}
 # init readers
 for cam in cameras:
 
-    r = Reader(name=cam, src=cameras[cam], type="rtsp_stream",
-               save_to_file=True, save_file="./data/archive3/%s.mp4" % cam)
+    r = Reader(name=cam,
+               src=cameras[cam],
+               type="rtsp_stream",
+               save_to_file=True,
+               save_dir="./data/archive")
 
     readers[cam] = r
+
+time.sleep(2)
 
 # show frames
 while True:
