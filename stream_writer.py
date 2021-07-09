@@ -1,10 +1,12 @@
+import time
+
 from utils import *
 
 cameras = {
     # "bot1": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:554",
     # "bot2": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:555",
     "mid1": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:556",
-    # "mid2": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:557",
+    "mid2": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:557",
     "top": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:558"
 }
 

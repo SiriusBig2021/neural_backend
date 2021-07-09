@@ -739,7 +739,7 @@ class Reader:
                     self.connected = False
                     self.kill()
                     self.connect_and_start_read()
-                    return {"error": "DEAD EMPTY QUEUE TOO LONG TIME. RESTARTED"}
+                    return {"error": "EMPTY QUEUE TOO LONG TIME. RESTARTED"}
 
                 continue
 
