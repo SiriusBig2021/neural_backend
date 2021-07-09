@@ -663,7 +663,7 @@ class Reader:
                     recorded_frames += 1
 
         except:
-            self.q.put({"name": name, "error": traceback.format_exc()})
+            self.q.put({"error": traceback.format_exc()})
             sys.exit()
 
     def read_from_files(self, name, src, type):
@@ -723,44 +723,34 @@ class Reader:
         frame_meta = None
         st = time.time()
 
+
         while frame is None:
 
             if not self.proc.is_alive():
                 self.connected = False
-                self.kill()
-                self.connect_and_start_read()
                 return {"error": "DEAD PROCESS. RESTARTED"}
 
             if self.q.empty():
                 empty_q_time += 0.1
                 time.sleep(0.1)
 
-                if empty_q_time > 15:
+                if empty_q_time > 5:
                     self.connected = False
-                    self.kill()
-                    self.connect_and_start_read()
-                    return {"error": "DEAD EMPTY QUEUE TOO LONG TIME. RESTARTED"}
+                    return {"error": "EMPTY QUEUE TOO LONG TIME. RESTARTED"}
 
                 continue
-
             out = self.q.get()
 
             if "error" in out:
                 self.connected = False
-                self.kill()
-                self.connect_and_start_read()
                 return {"error": f"READER PROCESS ERROR : {out['error']}. RESTARTED"}
 
             elif out["status"] is False:
                 self.connected = False
-                self.kill()
-                self.connect_and_start_read()
                 return {"error": "READER FALSE STATUS. RESTARTED"}
 
             elif out["frame"] is None:
                 self.connected = False
-                self.kill()
-                self.connect_and_start_read()
                 return {"error": "READER NONE FRAME. RESTARTED"}
 
             self.connected = True
@@ -771,7 +761,7 @@ class Reader:
 
     def kill(self):
         try:
-            os.kill(self.proc.pid, signal.SIGTERM)
+            os.kill(self.proc.pid, signal.SIGKILL)
         except ProcessLookupError:
             pass
 
@@ -786,6 +776,12 @@ class Reader:
             self.proc = multiprocessing.Process(target=self.read_from_files, args=(self.name, self.src, self.type,))
 
         self.proc.start()
+
+    def reset(self):
+        self.connected = False
+        self.q = multiprocessing.Queue(maxsize=1)
+        self.kill()
+        self.connect_and_start_read()
 
 
 class Writer:
