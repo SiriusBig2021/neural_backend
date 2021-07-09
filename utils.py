@@ -599,14 +599,11 @@ class MotionDetector:
 
 class Reader:
 
-    def __init__(self, name, src, type, save_to_file=False, save_dir=None, max_frames=5000):
+    def __init__(self, name, src, type):
 
         self.name = name
         self.src = src
         self.type = type
-        self.save_to_file = save_to_file
-        self.save_dir = save_dir
-        self.max_frame = max_frames
 
         if type not in ["webcam", "rtsp_stream", "file", "directory"]:
             raise Exception("Not implemented reader type")
@@ -618,7 +615,7 @@ class Reader:
 
         self.connect_and_start_read()
 
-    def read_rtsp(self, name, src, save_to_file, save_dir, max_frames):
+    def read_rtsp(self, name, src):
 
         try:
 
@@ -633,10 +630,6 @@ class Reader:
 
             proc_out["meta"] = {"h": h, "w": w, "fps": fps, "fourcc": fourcc}
 
-            recorded_frames = 0
-            recorded_chunks = 0
-            writer = None
-
             while True:
 
                 status, frame = cap.read()
@@ -645,22 +638,6 @@ class Reader:
 
                 if self.q.empty():
                     self.q.put(proc_out)
-
-                if save_to_file and frame is not None:
-
-                    if not os.path.isdir(save_dir):
-                        os.makedirs(save_dir)
-
-                    if recorded_frames % max_frames == 0:
-                        recorded_chunks += 1
-                        if writer is not None:
-                            writer.finish_writing()
-
-                        save_file_chunk = os.path.join(save_dir, f"{name}_{get_format_date()}.mp4")
-                        writer = Writer(file_name=save_file_chunk, fps=fps, height=h, width=w)
-
-                    writer.write_to_file(frame)
-                    recorded_frames += 1
 
         except:
             self.q.put({"error": traceback.format_exc()})
@@ -723,12 +700,11 @@ class Reader:
         frame_meta = None
         st = time.time()
 
-
         while frame is None:
 
             if not self.proc.is_alive():
                 self.connected = False
-                return {"error": "DEAD PROCESS. RESTARTED"}
+                return {"error": "DEAD PROCESS. RESTART READING"}
 
             if self.q.empty():
                 empty_q_time += 0.1
@@ -736,28 +712,28 @@ class Reader:
 
                 if empty_q_time > 5:
                     self.connected = False
-                    return {"error": "EMPTY QUEUE TOO LONG TIME. RESTARTED"}
+                    return {"error": "EMPTY QUEUE TOO LONG TIME. RESTART READING"}
 
                 continue
             out = self.q.get()
 
             if "error" in out:
                 self.connected = False
-                return {"error": f"READER PROCESS ERROR : {out['error']}. RESTARTED"}
+                return {"error": f"READER PROCESS ERROR : {out['error']}. RESTART READING"}
 
             elif out["status"] is False:
                 self.connected = False
-                return {"error": "READER FALSE STATUS. RESTARTED"}
+                return {"error": "READER FALSE STATUS. RESTART READING"}
 
             elif out["frame"] is None:
                 self.connected = False
-                return {"error": "READER NONE FRAME. RESTARTED"}
+                return {"error": "READER NONE FRAME. RESTART READING"}
 
             self.connected = True
             frame = out["frame"]
             frame_meta = out["meta"]
 
-        return {"frame": frame, "frame_meta": frame_meta, "time": time.time() - st}
+        return {"frame": frame, "meta": frame_meta, "time": round(time.time() - st, 4)}
 
     def kill(self):
         try:
@@ -768,12 +744,10 @@ class Reader:
     def connect_and_start_read(self):
 
         if self.type in ["webcam", "rtsp_stream"]:
-            self.proc = multiprocessing.Process(target=self.read_rtsp, args=(self.name, self.src,
-                                                                             self.save_to_file, self.save_dir,
-                                                                             self.max_frame))
+            self.proc = multiprocessing.Process(target=self.read_rtsp, args=(self.name, self.src, ))
 
         elif self.type in ["file", "directory"]:
-            self.proc = multiprocessing.Process(target=self.read_from_files, args=(self.name, self.src, self.type,))
+            self.proc = multiprocessing.Process(target=self.read_from_files, args=(self.name, self.src, self.type, ))
 
         self.proc.start()
 

@@ -10,6 +10,25 @@ sudo chmod +x ./install_linux.sh
 
 ### Useful info
 
+
+
+#### Microsoft Azure server
+Используем для хранения данных, обучения нейросетей
+
+```
+Как зайти по SSH:
+ssh admsirius@51.136.7.135
+## Gfhjkm4adm1!
+
+Открыть доступ к своему ПК по ssh в локальной сети:
+sudo apt install openssh-server
+
+Как перекидывать данные по ssh:
+rsync -avp --progress %PATH TO FILE/FOLDER% admsirius@51.136.7.135 %PATH TO DESTINATION%
+```
+
+
+
 #### Terminal commands
 При вводе пользуемся активно Tab для автодополнения ввода
 

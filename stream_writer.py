@@ -2,6 +2,11 @@ import time
 
 from utils import *
 
+do_imshow = True
+write_archive = True
+archive_dir = "./data/archive"
+chunk_max_frames = 5000
+
 cameras = {
     # "bot1": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:554",
     # "bot2": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:555",
@@ -10,26 +15,17 @@ cameras = {
     "top": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:558"
 }
 
-readers = {}
-
-writers = {}
-
-# init readers
-for cam in cameras:
-
-    r = Reader(name=cam,
-               src=cameras[cam],
-               type="rtsp_stream",
-               save_to_file=False,
-               save_dir="./data/archive")
-
-    readers[cam] = r
-
+# init reader process for each camera
+readers = {cam: Reader(name=cam, src=cameras[cam], type="rtsp_stream") for cam in cameras}
 time.sleep(2)
 
-# show frames
+writers = {cam: None for cam in cameras}
+recorded_frames = 0
+recorded_chunks = 0
+
 while True:
 
+    log_str = ""
     for cam in readers:
 
         reader_out = readers[cam].get_frame()
@@ -37,16 +33,42 @@ while True:
         if "error" in reader_out:
             print(get_format_date(), "##", cam, "##", "Error", reader_out["error"])
 
-            for camm in readers:
-                #print(f'after| cam - {readers[cam].name}, {readers[cam].connected}')
-                readers[camm].reset()
-                #print(f'before| cam - {readers[cam].name}, {readers[cam].connected}')
+            # reconnect to all cams if one disconnected
+            for c in readers:
+                readers[c].reset()
+                if write_archive and writers[c] is not None:
+                    writers[c].finish_writing()
 
+            cv2.destroyAllWindows()
             time.sleep(2)
             break
 
-        frame, frame_metadata = reader_out["frame"], reader_out["frame_meta"]
-        show_image(frame, win_name=cam, delay=1)
-        # print(frame)
+        log_str += f"{cam}: {reader_out['time']} "
 
-    # cv2.destroyAllWindows()
+        frame, metadata = reader_out["frame"], reader_out["meta"]
+
+        if do_imshow:
+            show_image(frame, win_name=cam, delay=1)
+
+        if write_archive:
+            if not os.path.isdir(archive_dir):
+                os.makedirs(archive_dir)
+
+            # init writers
+            if writers[cam] is None or recorded_frames % chunk_max_frames == 0:
+                recorded_chunks += 1
+
+                # finish writing if chunk filled
+                if writers[cam] is not None:
+                    writers[cam].finish_writing()
+
+                save_file = os.path.join(archive_dir, f"{cam}_{get_format_date()}.mp4")
+                writers[cam] = Writer(file_name=save_file, fps=metadata["fps"], height=metadata["h"], width=metadata["w"])
+
+            writers[cam].write_to_file(frame)
+            recorded_frames += 1
+
+    if write_archive:
+        log_str += f"writing to {archive_dir}"
+
+    print(get_format_date(), f"{log_str}")
