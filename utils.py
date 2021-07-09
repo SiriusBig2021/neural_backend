@@ -5,7 +5,6 @@ import cv2
 import numpy as np
 import string
 import random
-import requests
 import base64
 import shutil
 import glob
@@ -16,11 +15,6 @@ import multiprocessing
 import signal
 from logging.handlers import RotatingFileHandler
 
-try:
-    import msgpack
-    from transliterate import translit, get_available_language_codes
-except:
-    print("Not installed rare package")
 
 """
                     __________________________________________________
@@ -168,14 +162,6 @@ def import_something(py_path, obj_name):
     except:
         print("Can`t import {} object from {}. Exit.".format(obj_name, py_path))
         exit()
-
-
-def transliterate_rus_eng(s):
-    return translit(s, 'ru', reversed=True)
-
-
-def transliterate_eng_rus(s):
-    return translit(s, 'en', reversed=False)
 
 
 def find_free_port(p_from, p_to):
@@ -638,6 +624,9 @@ class Reader:
 
             proc_out = {"name": name}
 
+            # cmake
+            # ffmpeg
+            # gstreamer
             cap = cv2.VideoCapture(src)
 
             h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -666,7 +655,7 @@ class Reader:
                         recorded_chunks += 1
                         if writer is not None:
                             writer.finish_writing()
-                        save_file_chunk = save_file.replace(".mp4", "%s_%s.mp4" % (get_format_date(), recorded_chunks))
+                        save_file_chunk = save_file.replace(".mp4", "_%s.mp4" % recorded_chunks)
                         writer = Writer(file_name=save_file_chunk, fps=fps, height=h, width=w)
 
                     writer.write_to_file(frame)
@@ -739,7 +728,7 @@ class Reader:
                 self.connected = False
                 self.kill()
                 self.connect_and_start_read()
-                return {"frame": frame, "frame_meta": frame_meta, "time": time.time() - st}
+                return {"error": f"{self.name} ; DEAD PROCESS. RESTARTED"}
 
             if self.q.empty():
                 empty_q_time += 0.1
@@ -749,7 +738,7 @@ class Reader:
                     self.connected = False
                     self.kill()
                     self.connect_and_start_read()
-                    return {"frame": frame, "frame_meta": frame_meta, "time": time.time() - st}
+                    return {"error": f"{self.name} ; DEAD EMPTY QUEUE TOO LONG TIME. RESTARTED"}
 
                 continue
 
@@ -757,24 +746,21 @@ class Reader:
 
             if "error" in out:
                 self.connected = False
-                print("\nREADER PROCESS ERROR:\n", out["error"])
                 self.kill()
                 self.connect_and_start_read()
-                return {"error": out["error"]}
+                return {"error": f"{self.name} ; READER PROCESS ERROR : {out['error']}. RESTARTED"}
 
             elif out["status"] is False:
                 self.connected = False
-                print("\nREADER FALSE STATUS\n")
                 self.kill()
                 self.connect_and_start_read()
-                return {"frame": frame, "frame_meta": frame_meta, "time": time.time() - st}
+                return {"error": f"{self.name} ; READER FALSE STATUS. RESTARTED"}
 
             elif out["frame"] is None:
                 self.connected = False
-                print("\nREADER NONE FRAME\n")
                 self.kill()
                 self.connect_and_start_read()
-                return {"frame": frame, "frame_meta": frame_meta, "time": time.time() - st}
+                return {"error": f"{self.name} ; READER NONE FRAME. RESTARTED"}
 
             self.connected = True
             frame = out["frame"]
