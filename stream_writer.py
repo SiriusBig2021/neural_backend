@@ -13,6 +13,7 @@ readers = {}
 # init readers
 for cam in cameras:
 
+    # hello
     r = Reader(name=cam,
                src=cameras[cam],
                type="rtsp_stream",
