@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from easyocr import Reader
 
 
 class CNN(nn.Module):
@@ -79,3 +80,22 @@ class MLP(nn.Module):
 
         # print(x.shape)
         return x
+
+
+class EasyOcr:
+
+    def __init__(self):
+        self.model = Reader(["en"], gpu=True, verbose=False)
+
+    def predict(self, image):
+        results = self.model.readtext(image)
+
+        res = {"bbox": None, "number": None, "prob": None}
+        for (bbox, text, prob) in results:
+            (tl, tr, br, bl) = bbox
+            tl = (int(tl[0]), int(tl[1]))
+            tr = (int(tr[0]), int(tr[1]))
+            br = (int(br[0]), int(br[1]))
+            bl = (int(bl[0]), int(bl[1]))
+
+        return res
