@@ -8,19 +8,19 @@ class Undistorter:
 
     def __init__(self):
 
-        self.h = 722
-        self.w = 3172
+        self.h = 240
+        self.w = 1060
 
         self.distortion_cfg = {
             "cam1": {
 
-                "mtx": np.array([[7.22652646e+03, 0.00000000e+00, 1.57689240e+03],
-                                 [1.00000000e+00, 7.53228302e+03, 1.71065076e+03],
+                "mtx": np.array([[22426.52646, 100.0, 2376.8923999999997],
+                                 [601.0, 7532.283019999999, 1310.65076],
                                  [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]], dtype=np.float64),
 
                 "dist": np.array([[-1.90263172, -10.15574996, -0.22993206, -0.00856858, -0.007612]], dtype=np.float64),
 
-                "pts1": np.float32([tuple([0, 966]), tuple([3072, 88]), tuple([0, 1666]), tuple([3072, 1848])]),
+                "pts1": np.float32([tuple([178, 118]), tuple([1278, 153]), tuple([10, 726]), tuple([1278, 514])]),
                 "pts2": np.float32([[0, 0], [self.w, 0], [0, self.h], [self.w, self.h]])
             }
         }
@@ -33,10 +33,10 @@ class Undistorter:
                             dst=None,
                             newCameraMatrix=None)
 
-        # M = cv2.getPerspectiveTransform(src=self.distortion_cfg[cam_name]["pts1"],
-        #                                 dst=self.distortion_cfg[cam_name]["pts2"])
-        #
-        # dst = cv2.warpPerspective(dst, M, (self.w, self.h))
+        M = cv2.getPerspectiveTransform(src=self.distortion_cfg[cam_name]["pts1"],
+                                        dst=self.distortion_cfg[cam_name]["pts2"])
+
+        dst = cv2.warpPerspective(dst, M, (self.w, self.h))
         #
         # if cam_name == "cam2":
         #     dst = np.delete(dst, np.s_[:int(frame.shape[1] * 0.02)], axis=1)
@@ -55,7 +55,7 @@ class Undistorter:
             "c": None,
             "c1": None,
 
-            "mtx": [[20, 20, 100], [20, 20, 10], [1, 0.1, 0.1]],
+            "mtx": [[100, 100, 100], [100, 100, 100], [1, 0.1, 0.1]],
             "dist": [0.1, 1, 0.01, 0.05, 10]
 
         }
@@ -133,17 +133,16 @@ for n, _ in enumerate(wagon_frames):
     if n + 1 == len(wagon_frames):
         break
 
+    if n % 10 != 0:
+        continue
+
     img1 = wagon_frames[n]
     img2 = wagon_frames[n+1]
 
     undistorter.correct_params(img1, "cam1")
 
-    img1 = undistorter.undistort(img1, "cam1")
-
-
-
-
-    img2 = undistorter.undistort(img2, "cam1")
+    # img1 = undistorter.undistort(img1, "cam1")
+    # img2 = undistorter.undistort(img2, "cam1")
 
     # img1 = resize_image(img1, width=800)
     # img2 = resize_image(img2, width=800)
@@ -152,8 +151,8 @@ for n, _ in enumerate(wagon_frames):
         # stacked_img = np.hstack((img1, img2))
         stacked_img = img1
     else:
-        stacked_img2 = np.hstack((stacked_img, img2))
+        stacked_img = np.hstack((stacked_img, img2))
 
     # (stacked_img, matched_points) = panaroma.image_stitch([img1, img2], match_status=True)
 
-        show_image(stacked_img2)
+        show_image(stacked_img)

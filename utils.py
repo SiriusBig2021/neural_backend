@@ -710,7 +710,7 @@ class Reader:
                 empty_q_time += 0.1
                 time.sleep(0.1)
 
-                if empty_q_time > 5:
+                if empty_q_time > 15:
                     self.connected = False
                     return {"error": "EMPTY QUEUE TOO LONG TIME. RESTART READING"}
 
