@@ -3,30 +3,36 @@ from scipy.stats import mode
 
 import numpy as np
 
-opt_param = {
-    'threshold_magnitude': 6,
-    'size_accumulation': 6,
-    'opticflow_param': {
-        'pyr_scale': 0.5,
-        'levels': 3,
-        'winsize': 100,
-        'iterations': 4,
-        'poly_n': 5,
-        'poly_sigma': 1.1,
-        'flags': cv2.OPTFLOW_LK_GET_MIN_EIGENVALS
-    }
-}
+
+# opt_param = {
+#     'threshold_magnitude': 6,
+#     'size_accumulation': 6,
+#     'opticflow_param': {
+#         'pyr_scale': 0.5,
+#         'levels': 3,
+#         'winsize': 100,
+#         'iterations': 4,
+#         'poly_n': 5,
+#         'poly_sigma': 1.1,
+#         'flags': cv2.OPTFLOW_LK_GET_MIN_EIGENVALS
+#     }
+# }
 
 
 class DenseOpticalFlow:
 
-    def __init__(self,opt_param:dict):
+    def __init__(self, opt_param: dict):
         self.opt_param = opt_param
         self.directions_map = np.zeros([self.opt_param['size_accumulation'], 5])
         self.frame_previous = None
         self.gray_previous = None
 
     # желательно подавать обрезанную картинку
+
+    def clearHash(self):
+        self.directions_map.fill(0)
+        self.frame_previous = None
+        self.gray_previous = None
 
     def getMoveDirection(self, img):
         if self.frame_previous is None or self.gray_previous is None:
