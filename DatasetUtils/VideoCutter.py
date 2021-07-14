@@ -8,7 +8,7 @@ from datetime import datetime
 
 
 class VideoCutter:
-    __amountJumpByFrameLine = 25
+    __amountJumpByFrameLine = 30
 
     def __init__(self, outputPath, opt_param: dict, inputPath=None):
 
@@ -41,71 +41,59 @@ class VideoCutter:
     def addVideoInHandlerFolder(self, absolutePathToVideo):
         self.handlerFolder.append(absolutePathToVideo)
 
-    def __getAccumulatedFrames(self, cam) -> (list, None):
-
-        frameList = []
-
-        while cam.isOpened:
-            grabbed, frame = cam.read()
-
-            if not grabbed:
-                break
-
-            frameList.append(frame)
-
-        if len(frameList) == 0:
-            return None
-
-        return frameList
-
     def execute(self):
 
         for videoPath in self.handlerFolder:
 
             cam = cv2.VideoCapture(videoPath)
 
-            frameList = self.__getAccumulatedFrames(cam)
-
-            if frameList is None:
-                print('[WARNING] Failed to collect video. Video will be skipped.')
-                continue
-
             print('[INFO] Current video: ' + videoPath)
 
-            nbFrames = len(frameList)
-            counterFrame = 0
+            nbFrames = cam.get(cv2.CAP_PROP_FRAME_COUNT)
+            indFrame = 0
 
-            while counterFrame < nbFrames:
+            while cam.isOpened() and indFrame < nbFrames:
 
-                print('[INFO] Frame line: [' + str(counterFrame) + '/' + str(nbFrames - 1) + ']')
+                print('[INFO] Frame line: [' + str(indFrame) + '/' + str(nbFrames - 1) + ']')
 
                 key = cv2.waitKey(33)
 
+                # skip video
                 if key == ord('s'):
                     print('[INFO] skipping video')
                     break
 
+                # roll video on amountJumpByFrameLine
                 elif key == ord('e'):
 
                     self.optflow.clearHash()
-                    if counterFrame + self.__amountJumpByFrameLine >= nbFrames - 1:
-                        counterFrame = nbFrames - 1
+                    if indFrame + self.__amountJumpByFrameLine >= nbFrames - 1:
+                        indFrame = nbFrames - 1
                     else:
-                        counterFrame += self.__amountJumpByFrameLine
+                        indFrame += self.__amountJumpByFrameLine
 
+                # roll back video on amountJumpByFrameLine
                 elif key == ord('q'):
 
                     self.optflow.clearHash()
-                    if counterFrame - self.__amountJumpByFrameLine <= 0:
-                        counterFrame = 0
+                    if indFrame - self.__amountJumpByFrameLine <= 0:
+                        indFrame = 0
                     else:
-                        counterFrame -= self.__amountJumpByFrameLine
+                        indFrame -= self.__amountJumpByFrameLine
 
-                direction = self.optflow.getMoveDirection(frameList[counterFrame][140:, :])
+                # set current frame by index
+                cam.set(cv2.CAP_PROP_POS_FRAMES, indFrame)
+                grabbed, frame = cam.read()
+
+                if not grabbed:
+                    print('[INFO] Failed to capture video')
+                    break
+
+                direction = self.optflow.getMoveDirection(frame[140:, :])
                 # print('[INFO] direction: ' + direction)
 
-                cv2.imshow('In Opt', frameList[counterFrame][140:, :])
-                cv2.imshow(videoPath, frameList[counterFrame])
+                cv2.imshow('In Opt', frame[140:, :])
+                cv2.imshow(videoPath, frame)
                 cv2.waitKey(1)
 
                 if direction != 'wait':
@@ -118,16 +106,19 @@ class VideoCutter:
                                + '.' + fileSuffix
                         fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
                         fps = cam.get(cv2.CAP_PROP_FPS)
-                        size = frameList[counterFrame].shape[:2][::-1]
+                        size = frame.shape[:2][::-1]
                         self.__initVideoWriter(self.outPath + name, fourcc, fps, size)
 
-                    self.videoWriter.write(frameList[counterFrame])
+                    self.videoWriter.write(frame)
 
                 elif direction == 'wait':
                     if self.videoWriter is not None:
                         self.__destroyVideoWriter()
 
-                counterFrame += 1
+                indFrame += 1
 
             cam.release()
             cv2.destroyWindow(videoPath)
+
+
+
