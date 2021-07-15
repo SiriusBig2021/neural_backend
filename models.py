@@ -88,14 +88,12 @@ class EasyOcr:
         self.model = Reader(["en"], gpu=True, verbose=False)
 
     def predict(self, image):
-        results = self.model.readtext(image)
+        results = self.model.readtext(image,
+                                      contrast_ths=10,
+                                      # adjust_contrast=100,
+                                      # filter_ths=0,
+                                      low_text=0.15,
+                                      # beamWidth=25
+                                      )
 
-        res = {"bbox": None, "number": None, "prob": None}
-        for (bbox, text, prob) in results:
-            (tl, tr, br, bl) = bbox
-            tl = (int(tl[0]), int(tl[1]))
-            tr = (int(tr[0]), int(tr[1]))
-            br = (int(br[0]), int(br[1]))
-            bl = (int(bl[0]), int(bl[1]))
-
-        return res
+        return results
