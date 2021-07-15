@@ -71,7 +71,11 @@ if __name__ == "__main__":
 
         transform = transforms.Compose([
             transforms.ToTensor(),
-            # transforms.Normalize((0.5,), (0.5,))
+            # transforms.RandomHorizontalFlip(p=0.5),
+            # transforms.RandomRotation(degrees=15),
+            # transforms.GaussianBlur(kernel_size=25),
+            # transforms.RandomGrayscale(p=0.5),
+            # transforms.ColorJitter(brightness=(0.1, 1.5), contrast=(0, 4), saturation=(0, 4), hue=(-0.5, 0.5)),
         ])
 
         train_set = MNIST("./data", train=True, download=False, transform=transform)
