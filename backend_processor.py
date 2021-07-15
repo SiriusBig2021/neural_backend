@@ -9,6 +9,8 @@ archive_dir = "./data/archive"
 chunk_max_frames = 50000
 write_to_new_file_if_reconnect = False
 
+fffffffff = 0
+
 cameras = {
     # "bot1": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:554",
     # "bot2": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:555",
