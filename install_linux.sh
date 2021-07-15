@@ -7,11 +7,6 @@
 python_v=python3.8
 env_name="torch1.81"
 
-if [ -d "$HOME/.virtualenvs/$env_name" ]; then
-  echo -e "# # # VIRTUAL ENVIRONMENT $env_name ALREADY EXIST. EXIT. # # #"
-  exit 0
-fi
-
 add-apt-repository ppa:deadsnakes/ppa -y
 apt-get -y install $python_v
 apt-get -y install $python_v-dev

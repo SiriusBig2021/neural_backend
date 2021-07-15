@@ -53,15 +53,15 @@ class CNN(nn.Module):
 
 class MLP(nn.Module):
 
-    def __init__(self, input_shape):
+    def __init__(self, input_shape, classes):
         super(MLP, self).__init__()
 
         self.input_shape = input_shape
 
         self.fl = nn.Flatten()
-        self.fc1 = nn.Linear(in_features=self.input_shape[0]*self.input_shape[1]*self.input_shape[2], out_features=10)
-        self.fc2 = nn.Linear(in_features=10, out_features=10)
-        self.fc3 = nn.Linear(in_features=10, out_features=10)
+        self.fc1 = nn.Linear(in_features=self.input_shape[0]*self.input_shape[1]*self.input_shape[2], out_features=128)
+        self.fc2 = nn.Linear(in_features=128, out_features=64)
+        self.fc3 = nn.Linear(in_features=64, out_features=len(classes))
         self.relu = nn.ReLU()
         # self.softmax = nn.LogSoftmax()
         # self.softmax = nn.Softmax()
@@ -70,7 +70,6 @@ class MLP(nn.Module):
 
     def forward(self, x):
         x = self.fl(x)
-        # print(x.shape)
         x = self.fc1(x)
         # print(x.shape)
         x = self.relu(x)
