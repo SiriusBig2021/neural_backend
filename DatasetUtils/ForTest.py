@@ -4,6 +4,8 @@ from DatasetUtils.DatasetSplitter import DatasetSplitter
 
 import cv2
 
+# For DenseOpticFlow in VideoCutter
+
 opt_param = {
     # Не лезь если ты не Женя
     'threshold_magnitude': 6,  # пороговая амплитуда движения
@@ -24,13 +26,20 @@ opt_param = {
 
 '''ВЕЗДЕ УКАЗЫВАТЬ АБСОЛЮТНЫЙ ПУТЬ'''
 
-datasetPath = ''  # путь до папки куда будут сохраненны нарезанные изображения
-datasetMetaFilePath = ''  # путь до файла с мета-данными о нарезанных изображениях
-trainMetaFilePath = ''  # путь до файла с мета-данными о нарезанных изображениях для Train выборки
-testMetaFilePath = ''  # путь до файла с мета-данными о нарезанных изображениях для Test выборки
+datasetPath = '/home/sauce-chili/Sirius/neural_backend/data/Dataset/Fill_or_Empry_Dataset/Imgs/'  # путь до папки куда будут сохраненны нарезанные изображения
+# открывается в режиме дозаписи
+datasetMetaFilePath = '/home/sauce-chili/Sirius/neural_backend/data/Dataset/Fill_or_Empry_Dataset/metadata.classes'  # путь до файла с мета-данными о нарезанных изображениях
+# открываются в режиме перезаписи
+trainMetaFilePath = '/home/sauce-chili/Sirius/neural_backend/data/Dataset/Fill_or_Empry_Dataset/trainMetaFile.classes'  # путь до файла с мета-данными о нарезанных изображениях для Train выборки
+testMetaFilePath = '/home/sauce-chili/Sirius/neural_backend/data/Dataset/Fill_or_Empry_Dataset/testMetaFile.classes'  # путь до файла с мета-данными о нарезанных изображениях для Test выборки
+
 nbInPercentOnTrain = 0.7  # процент данных, который пойдет в Train выборку от общего кол-во данных в datasetMetaFilePath
 
-splitter = DatasetSplitter(datasetMetaFilePath, nbInPercentOnTrain, trainMetaFilePath, testMetaFilePath)
+
+splitter = DatasetSplitter(datasetMetaFile=datasetMetaFilePath,
+                           percentTrainImg=nbInPercentOnTrain,
+                           outTrainMetaFile=trainMetaFilePath,
+                           outTestMetaFile=testMetaFilePath)
 
 ### Обязательно заполнить перед запуском ###
 
@@ -45,7 +54,6 @@ labels = {
 ############################################
 
 pathToVideo = ''  # путь до видео, которое булет нарезанно на кадры
-pathToMetaFile = ''  # путь до мета-файла нарезанных изображений
 
-dsmaker = DatasetCreator(pathToVideo, datasetPath, pathToMetaFile, labels, splitter)
+dsmaker = DatasetCreator(pathToVideo, datasetPath, datasetMetaFilePath, labels, splitter)
 # dsmaker.create()
