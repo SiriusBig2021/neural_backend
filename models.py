@@ -195,19 +195,27 @@ class OCRReader:
         if watch:
             show_image(warped_img, delay=0)
 
-    def image_run(self, cut_box=[(196, 400), (1235, 400), (1235, 1041), (196, 1041)], watch=True):
+    def image_run(self, local_src, cut_box=[(196, 400), (1235, 400), (1235, 1041), (196, 1041)], watch=False, max_wait_iterations=20):
         """
+        >
         > watch - (True or False) watching image
         > cut_box - coordinates in pixels for cutting frame [(top_left), (top_right), (bot_right), (bot_left)] (x, y)
         """
-        warped_img = warp_image(self.img, np.array(eval(str(cut_box)), dtype="float32"))
+        warped_img = warp_image(local_src, np.array(eval(str(cut_box)), dtype="float32"))
         results = self.model.predict(warped_img, 7)  # , draw_bbox
+        if len(results) == 0:
+            self.empty_frames += 1
         if len(results):
+            self.model.saver(results)
             self.image_show(warped_img, results)
-            self.all_info[time.time()] = results
-            print(self.all_info)
+        elif self.empty_frames == max_wait_iterations:
+            pif_paf = self.model.choose()
+            if pif_paf:
+                self.all_info[time.time()] = pif_paf
+                print(self.empty_frames)
+            self.empty_frames = 0
         if watch:
-            show_image(warped_img, delay=0)
+            show_image(warped_img, delay=1)
 
     def images_run(self, cut_box=[(196, 400), (1235, 400), (1235, 1041), (196, 1041)], watch=True):
         """
