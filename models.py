@@ -4,19 +4,21 @@ import torch.nn.functional as F
 from easyocr import Reader
 import numpy as np
 import time
-from utils import warp_image, show_image, get_filelist, draw_bbox
+from torchsummary import summary
+from utils import warp_image, show_image, get_filelist
 import cv2
-import pytesseract
-from torchvision.models import mobilenet
 
 
 # NN for classification wagon status(Fill or Empty)
 class FENN(nn.Module):
 
-    def __init__(self, input_shape):
+    def __init__(self, input_shape, classes: list, deviceType):
         super(FENN, self).__init__()
 
         self.input_shape = input_shape
+        self.classes = classes
+        self.device = torch.device("cpu")
+        self.to(device=self.device)
         self.network = nn.Sequential(
 
             nn.Conv2d(in_channels=input_shape[0], out_channels=32, kernel_size=3, padding=1),
@@ -38,71 +40,58 @@ class FENN(nn.Module):
             nn.MaxPool2d(2, 2),
 
             nn.Flatten(),
-            nn.Linear(self.input_shape[1] * 2 * 8 * 8, 1024),
+            nn.Linear(self.input_shape[1] * 2 * 16 * 16, 256),
             nn.ReLU(),
-            nn.Linear(1024, 512),
+            nn.Linear(256, 128),
             nn.ReLU(),
-            nn.Linear(512, 10)
+            nn.Linear(128, len(classes))
         )
+        # summary(self, self.input_shape)
 
     def forward(self, x):
         return self.network(x)
 
+    def predict(self, image):
 
-class CNN(nn.Module):
-    def __init__(self, input_shape):
-        super(CNN, self).__init__()
+        predict = {}
 
-        self.input_shape = input_shape
+        with torch.no_grad():
+            # print(self.input_shape[1:])
+            # print(image)
+            img = cv2.resize(image, self.input_shape[1:]) / 255.0
+            img_tensor = torch.from_numpy(img)
+            img_tensor = img_tensor.permute(2, 0, 1).float()
+            img_tensor = torch.unsqueeze(img_tensor, 0)
 
-        self.conv1 = nn.Conv2d(in_channels=self.input_shape[0],
-                               out_channels=self.input_shape[1],
-                               kernel_size=3,
-                               padding=1)
+            # forward + backward + optimize
 
-        self.conv2 = nn.Conv2d(in_channels=self.input_shape[1],
-                               out_channels=self.input_shape[1]*2,
-                               kernel_size=3,
-                               padding=1)
+            img_tensor = img_tensor.to(self.device)
+            predicts = torch.softmax(self.forward(img_tensor), dim=1).cpu().numpy()[0]
 
-        self.pool = nn.MaxPool2d(2,2)
-        self.fl = nn.Flatten()
-        self.fc1 = nn.Linear(self.input_shape[1]*2*8*8, 128)
-        self.fc2 = nn.Linear(128, 10)
-        self.dropout = torch.nn.Dropout(p=0.5)
-        self.relu = torch.nn.ReLU()
+            # predicts = predicts.cpu().numpy()
+            className = self.classes[predicts.argmax()]
+            # print(className, predicts)
+            accuracy = predicts[predicts.argmax()]
+            # print(accuracy)
 
-    def forward(self, x):
-        x = self.conv1(x)
-        # print(x.shape)
-        x = self.relu(x)
-        x = self.pool(x)
-        # print(x.shape)
-        x = self.conv2(x)
-        # print(x.shape)
-        x = self.relu(x)
-        x = self.pool(x)
-        # print(x.shape)
-        x = self.fl(x)
-        print(x.shape)
-        # x = x.reshape(x.size(0), -1)
-        x = self.fc1(x)
-        x = self.dropout(x)
-        prediction = self.fc2(x)
-        return prediction
+            predict["className"] = className
+            predict["accuracy"] = accuracy
+
+        return predict
 
 
 class MLP(nn.Module):
 
-    def __init__(self, input_shape):
+    def __init__(self, input_shape, classes):
         super(MLP, self).__init__()
 
         self.input_shape = input_shape
 
         self.fl = nn.Flatten()
-        self.fc1 = nn.Linear(in_features=self.input_shape[0]*self.input_shape[1]*self.input_shape[2], out_features=10)
-        self.fc2 = nn.Linear(in_features=10, out_features=10)
-        self.fc3 = nn.Linear(in_features=10, out_features=10)
+        self.fc1 = nn.Linear(in_features=self.input_shape[0] * self.input_shape[1] * self.input_shape[2],
+                             out_features=128)
+        self.fc2 = nn.Linear(in_features=128, out_features=64)
+        self.fc3 = nn.Linear(in_features=64, out_features=len(classes))
         self.relu = nn.ReLU()
         # self.softmax = nn.LogSoftmax()
         # self.softmax = nn.Softmax()
@@ -111,7 +100,6 @@ class MLP(nn.Module):
 
     def forward(self, x):
         x = self.fl(x)
-        # print(x.shape)
         x = self.fc1(x)
         # print(x.shape)
         x = self.relu(x)
@@ -130,6 +118,7 @@ class MLP(nn.Module):
 
 class EasyOcr:
     """class with EasyOcr and sorting algorithm"""
+
     def __init__(self):
         self.model = Reader(["en"], gpu=True, verbose=False)
         self.buff = {}
@@ -161,6 +150,8 @@ class EasyOcr:
             all_items[clef] = res
             if len(text) < minsize:
                 continue
+            elif text.isdigit() == 0:
+                continue
             else:
                 clefs.append(clef)
         clefs.sort()
@@ -188,7 +179,7 @@ class EasyOcr:
 
 
 class OCRReader:
-    def __init__(self, src, type="mp4", format_directory="jpg", all_info=None):
+    def __init__(self, src=None, type=None, format_directory="jpg", all_info=None):
         """
         ---this class should be used for comfortable reading text-information from frames---
 
@@ -201,19 +192,22 @@ class OCRReader:
         self.src = src
         self.all_info = all_info
         self.video = None
-        self.empty_frames = 0
+        self.empty_frames = 0   # global variable which shows how many frames passed without a number
         self.model = EasyOcr()
-        if type == "mp4" or type == "rtsp":
+        if type == "mp4":
             self.video = cv2.VideoCapture(src)
+            print("video in ocr")
         elif type == "dir":
             self.counter = 0
             self.imgs = get_filelist(src, [format_directory])
-        elif type == "img":
-            self.img = cv2.imread(src)
+            print("directory in ocr")
+        elif type == "rtsp":
+            print("rtsp in ocr")
         else:
             raise Exception("Not implemented reader type")
 
-    def video_run(self, max_wait_iterations=20, cut_box=[(196, 400), (1235, 400), (1235, 1041), (196, 1041)], watch=True):
+    def video_run(self, max_wait_iterations=20, cut_box=[(196, 400), (1235, 400), (1235, 1041), (196, 1041)],
+                  watch=True):
         """
         > max_wait_iterations - delay after choosing final info for saving
         > watch - (True or False) watching video
@@ -226,27 +220,13 @@ class OCRReader:
             self.empty_frames += 1
         if len(results):
             self.model.saver(results)
-            self.image_show(warped_img, results)
+            self.show_bbox(warped_img, results)
         elif self.empty_frames == max_wait_iterations:
             pif_paf = self.model.choose()
             if pif_paf:
                 self.all_info[time.time()] = pif_paf
                 print(self.empty_frames)
             self.empty_frames = 0
-        if watch:
-            show_image(warped_img, delay=0)
-
-    def image_run(self, cut_box=[(196, 400), (1235, 400), (1235, 1041), (196, 1041)], watch=True):
-        """
-        > watch - (True or False) watching image
-        > cut_box - coordinates in pixels for cutting frame [(top_left), (top_right), (bot_right), (bot_left)] (x, y)
-        """
-        warped_img = warp_image(self.img, np.array(eval(str(cut_box)), dtype="float32"))
-        results = self.model.predict(warped_img, 7)  # , draw_bbox
-        if len(results):
-            self.image_show(warped_img, results)
-            self.all_info[time.time()] = results
-            print(self.all_info)
         if watch:
             show_image(warped_img, delay=0)
 
@@ -266,7 +246,7 @@ class OCRReader:
             self.empty_frames += 1
         if len(results):
             self.model.saver(results)
-            self.image_show(warped_img, results)
+            self.show_bbox(warped_img, results)
         elif self.empty_frames == 1:
             pif_paf = self.model.choose()
             if pif_paf:
@@ -276,7 +256,35 @@ class OCRReader:
         if watch:
             show_image(warped_img, delay=0)
 
-    def image_show(self, img, results):
+    def main_ocr_run(self, local_src, max_wait_iterations=20):
+        """
+        > independent function
+        > should be used in Data Processor
+        if the number has not appeared yet returns None
+        if the number has appeared
+        """
+        results = self.model.predict(local_src, 7)  # , draw_bbox
+        print(len(results))
+        if len(results) == 0 and len(self.model.buff) > 0:
+            if self.empty_frames != max_wait_iterations:
+                self.empty_frames += 1
+                return results
+        if len(results):
+            self.model.saver(results)
+            # cv2.imwrite(f"./data/results_of_backend/{time.ctime()} - mid1.jpg", local_src)
+            self.show_bbox(local_src, results)
+            self.empty_frames = 0
+            return {"flag": "writing in the buffer now"}
+        elif self.empty_frames >= max_wait_iterations:
+            pif_paf = self.model.choose()
+            if pif_paf:
+                self.empty_frames = 0
+                return pif_paf
+                # print(self.empty_frames)
+        else:
+            return results
+
+    def show_bbox(self, img, results):
         tl = results["bbox"][1]
         br = results["bbox"][2]
         text = results["number"]
@@ -285,3 +293,6 @@ class OCRReader:
 
     def cleaner(self):
         self.empty_frames = 0
+
+
+
