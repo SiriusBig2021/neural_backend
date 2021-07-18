@@ -5,8 +5,8 @@ import numpy as np
 
 
 # opt_param = {
-#     'threshold_magnitude': 6,
-#     'size_accumulation': 6,
+#     'threshold_magnitude': 5,
+#     'size_accumulation': 5,
 #     'opticflow_param': {
 #         'pyr_scale': 0.5,
 #         'levels': 3,
