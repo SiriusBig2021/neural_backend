@@ -42,7 +42,7 @@ opt_param = {
 max_wait_iteration = 4
 cut_cord_mid1 = [(0, 249), (1296, 249), (1296, 1065), (0, 1065)]
 do_imshow = True
-do_save_results = False
+do_save_results = True
 ############################################################################################
 
 ##########--initialization--################################################################
@@ -104,6 +104,7 @@ if __name__ == "__main__":
                         moment_frames["top"]["direction"] = movement_direct
                         top_buf = moment_frames["top"]
                         top_buf["time"] = get_format_date(date_format="%d-%m-%YT%H:%M:%S")
+                        print(top_buf["time"])
                         print(len(top_buf))
                         print("wagon with number, and it goes to the buffer")
 
@@ -111,20 +112,17 @@ if __name__ == "__main__":
                         # fn_prob = FENN.get_prediction(top_buf["frame"]).getClassName()
                         # top_buf["state"] = fn_prob
                         #################--Drawing_bbox--#################################
-                        tl = ocr_handler["bbox"][1]
-                        br = ocr_handler["bbox"][2]
                         text = ocr_handler["number"]
-                        cv2.rectangle(cut_frame_mid1, tl, br, (0, 255, 0), 2)
-                        cv2.putText(cut_frame_mid1, text, (tl[0], tl[1] - 10), fontFace, fontScale, color, thickness)
-                        cv2.putText(cut_frame_mid1, movement_direct, (30, 40), fontFace, fontScale, color, thickness)
+                        cv2.putText(ocr_handler["frame"], movement_direct, (30, 40), fontFace, fontScale, color, thickness)
                         cv2.putText(top_buf["frame"], top_buf["time"], (30, 40), fontFace, fontScale, color, thickness)
                         ##################################################################
                         ################--Save_image--####################################
                         #TODO-----------------------------------------------------------------------------------
-                        cv2.imwrite(f"./data/results_of_backend/{top_buf['time']} - mid-MAIN.jpg", cut_frame_mid1)
+                        # cv2.imwrite(f"./data/results_of_backend/{top_buf['time']} - mid-MAIN.jpg", cut_frame_mid1)
+                        # show_image(ocr_handler["frame"], win_name="mainMain", delay=1)
                         #TODO-----------------------------------------------------------------------------------
                         if do_save_results:
-                            cv2.imwrite(f"./data/results_of_backend/{top_buf['time']} - mid1.jpg", cut_frame_mid1)
+                            cv2.imwrite(f"./data/results_of_backend/{top_buf['time']} - mid1.jpg", ocr_handler["frame"])
                             cv2.imwrite(f"./data/results_of_backend/{top_buf['time']} - top.jpg", top_buf["frame"])
                         ##################################################################
                         counter += 1
@@ -135,7 +133,6 @@ if __name__ == "__main__":
                                                      "number": ocr_handler["number"]}}
 
                         top_buf.clear()
-                        # print(f"номер вагона = {ocr_handler['number']}")
 
             # if len(all_info) == 0:
             #     print("\r", "нет значений", end="")
@@ -144,6 +141,7 @@ if __name__ == "__main__":
 
             ############################--Images showing--#############################################################
             if do_imshow:
+                cv2.putText(cut_frame_mid1, movement_direct, (30, 40), fontFace, fontScale, color, thickness)
                 show_image(cut_frame_mid1, win_name="mid1_circumcised", delay=1)
                 for i in moment_frames:
                     show_image(moment_frames[i]["frame"], win_name=i, delay=1)
