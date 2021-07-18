@@ -17,7 +17,7 @@ class FENN(nn.Module):
 
         self.input_shape = input_shape
         self.classes = classes
-        self.device = torch.device("cpu")
+        self.device = torch.device(deviceType)
         self.to(device=self.device)
         self.network = nn.Sequential(
 
