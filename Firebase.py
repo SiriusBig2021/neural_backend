@@ -27,7 +27,7 @@ class DataComposer:
         self.db = firestore.client()
 
     def getCurrentShift(self):
-        currentTime = datetime.now().replace(hour=20)
+        currentTime = datetime.now()
         shiftType = None
 
         if is_time_between(time(7, 30), time(19, 30), currentTime.time()):
