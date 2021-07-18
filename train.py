@@ -116,13 +116,13 @@ if __name__ == "__main__":
             # transforms.ColorJitter(brightness=(0.1, 1.5), contrast=(0, 4), saturation=(0, 4), hue=(-0.5, 0.5)),
         ])
 
-<<<<<<< HEAD
+
         # train_set = MNIST("./data/datasets", train=True, download=False, transform=transform)
         # test_set = MNIST("./data/datasets", train=False, download=False, transform=transform)
 
-        train_set = CIFAR10("./data/datasets", train=True, download=True, transform=transform)
-        test_set = CIFAR10("./data/datasets", train=False, download=True, transform=transform)
-=======
+        # train_set = CIFAR10("./data/datasets", train=True, download=True, transform=transform)
+        # test_set = CIFAR10("./data/datasets", train=False, download=True, transform=transform)
+
         train_set = CustomDataset(
             metaFile="/home/sauce-chili/Sirius/neural_backend/data/Dataset/Fill_or_Empry_Dataset/trainMetaFile.classes",
             imagesPath="/home/sauce-chili/Sirius/neural_backend/data/Dataset/Fill_or_Empry_Dataset/Imgs",
@@ -137,7 +137,7 @@ if __name__ == "__main__":
             modelType='fillClassifier',
             transform=transform
         )
->>>>>>> 67b5ccaf875e4893b6b183af3e13d05365150a21
+
 
         train_gen = torch.utils.data.DataLoader(train_set, batch_size=cfg["batch_size"], shuffle=True, num_workers=1)
         test_gen = torch.utils.data.DataLoader(test_set, batch_size=cfg['batch_size'], shuffle=False, num_workers=1)
@@ -161,17 +161,12 @@ if __name__ == "__main__":
             for i, data in pbar:
                 images, labels = data[0], data[1]
 
-<<<<<<< HEAD
-                for im in images:
-                    im = np.transpose(im.numpy(), (1, 2, 0))
-                    show_image(im)
-=======
                 # for j, im in enumerate(images):
                 #     im = im.numpy()
                 #     im = np.transpose(im, (1, 2, 0))
                 #     print(labels[j].numpy())
                 #     show_image(im)
->>>>>>> 67b5ccaf875e4893b6b183af3e13d05365150a21
+
 
                 inputs, labels = images.to(device), labels.to(device)
 
