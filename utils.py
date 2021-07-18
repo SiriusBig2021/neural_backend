@@ -5,7 +5,6 @@ import cv2
 import numpy as np
 import string
 import random
-import requests
 import base64
 import shutil
 import glob
@@ -16,11 +15,6 @@ import multiprocessing
 import signal
 from logging.handlers import RotatingFileHandler
 
-try:
-    import msgpack
-    from transliterate import translit, get_available_language_codes
-except:
-    print("Not installed rare package")
 
 """
                     __________________________________________________
@@ -168,14 +162,6 @@ def import_something(py_path, obj_name):
     except:
         print("Can`t import {} object from {}. Exit.".format(obj_name, py_path))
         exit()
-
-
-def transliterate_rus_eng(s):
-    return translit(s, 'ru', reversed=True)
-
-
-def transliterate_eng_rus(s):
-    return translit(s, 'en', reversed=False)
 
 
 def find_free_port(p_from, p_to):
@@ -613,14 +599,11 @@ class MotionDetector:
 
 class Reader:
 
-    def __init__(self, name, src, type, save_to_file=False, save_file=None, max_frames=5000):
+    def __init__(self, name, src, type):
 
         self.name = name
         self.src = src
         self.type = type
-        self.save_to_file = save_to_file
-        self.save_file = save_file
-        self.max_frame = max_frames
 
         if type not in ["webcam", "rtsp_stream", "file", "directory"]:
             raise Exception("Not implemented reader type")
@@ -632,7 +615,7 @@ class Reader:
 
         self.connect_and_start_read()
 
-    def read_rtsp(self, name, src, save_to_file, save_file, max_frames):
+    def read_rtsp(self, name, src):
 
         try:
 
@@ -647,10 +630,6 @@ class Reader:
 
             proc_out["meta"] = {"h": h, "w": w, "fps": fps, "fourcc": fourcc}
 
-            recorded_frames = 0
-            recorded_chunks = 0
-            writer = None
-
             while True:
 
                 status, frame = cap.read()
@@ -660,20 +639,8 @@ class Reader:
                 if self.q.empty():
                     self.q.put(proc_out)
 
-                if save_to_file and frame is not None:
-
-                    if recorded_frames % max_frames == 0:
-                        recorded_chunks += 1
-                        if writer is not None:
-                            writer.finish_writing()
-                        save_file_chunk = save_file.replace(".mp4", "_%s.mp4" % recorded_chunks)
-                        writer = Writer(file_name=save_file_chunk, fps=fps, height=h, width=w)
-
-                    writer.write_to_file(frame)
-                    recorded_frames += 1
-
         except:
-            self.q.put({"name": name, "error": traceback.format_exc()})
+            self.q.put({"error": traceback.format_exc()})
             sys.exit()
 
     def read_from_files(self, name, src, type):
@@ -722,7 +689,7 @@ class Reader:
             sys.exit()
 
         except:
-            self.q.put({"name": name, "error": traceback.format_exc()})
+            self.q.put({"error": traceback.format_exc()})
             sys.exit()
 
     def get_frame(self):
@@ -737,9 +704,7 @@ class Reader:
 
             if not self.proc.is_alive():
                 self.connected = False
-                self.kill()
-                self.connect_and_start_read()
-                return {"frame": frame, "frame_meta": frame_meta, "time": time.time() - st}
+                return {"error": "DEAD PROCESS. RESTART READING"}
 
             if self.q.empty():
                 empty_q_time += 0.1
@@ -747,59 +712,50 @@ class Reader:
 
                 if empty_q_time > 15:
                     self.connected = False
-                    self.kill()
-                    self.connect_and_start_read()
-                    return {"frame": frame, "frame_meta": frame_meta, "time": time.time() - st}
+                    return {"error": "EMPTY QUEUE TOO LONG TIME. RESTART READING"}
 
                 continue
-
             out = self.q.get()
 
             if "error" in out:
                 self.connected = False
-                print("\nREADER PROCESS ERROR:\n", out["error"])
-                self.kill()
-                self.connect_and_start_read()
-                return {"error": out["error"]}
+                return {"error": f"READER PROCESS ERROR : {out['error']}. RESTART READING"}
 
             elif out["status"] is False:
                 self.connected = False
-                print("\nREADER FALSE STATUS\n")
-                self.kill()
-                self.connect_and_start_read()
-                return {"frame": frame, "frame_meta": frame_meta, "time": time.time() - st}
+                return {"error": "READER FALSE STATUS. RESTART READING"}
 
             elif out["frame"] is None:
                 self.connected = False
-                print("\nREADER NONE FRAME\n")
-                self.kill()
-                self.connect_and_start_read()
-                return {"frame": frame, "frame_meta": frame_meta, "time": time.time() - st}
+                return {"error": "READER NONE FRAME. RESTART READING"}
 
             self.connected = True
             frame = out["frame"]
             frame_meta = out["meta"]
 
-        return {"frame": frame, "frame_meta": frame_meta, "time": time.time() - st}
+        return {"frame": frame, "meta": frame_meta, "time": round(time.time() - st, 4)}
 
     def kill(self):
         try:
-            os.kill(self.proc.pid, signal.SIGTERM)
+            os.kill(self.proc.pid, signal.SIGKILL)
         except ProcessLookupError:
             pass
 
     def connect_and_start_read(self):
 
         if self.type in ["webcam", "rtsp_stream"]:
-            self.proc = multiprocessing.Process(target=self.read_rtsp, args=(self.name, self.src,
-                                                                             self.save_to_file, self.save_file,
-                                                                             self.max_frame))
+            self.proc = multiprocessing.Process(target=self.read_rtsp, args=(self.name, self.src, ))
 
         elif self.type in ["file", "directory"]:
-            self.proc = multiprocessing.Process(target=self.read_from_files, args=(self.name, self.src, self.type,))
+            self.proc = multiprocessing.Process(target=self.read_from_files, args=(self.name, self.src, self.type, ))
 
         self.proc.start()
-        time.sleep(2)
+
+    def reset(self):
+        self.connected = False
+        self.q = multiprocessing.Queue(maxsize=1)
+        self.kill()
+        self.connect_and_start_read()
 
 
 class Writer:

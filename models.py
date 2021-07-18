@@ -119,6 +119,8 @@ class EasyOcr:
             all_items[clef] = res
             if len(text) < minsize:
                 continue
+            elif text.isdigit() == 0:
+                continue
             else:
                 clefs.append(clef)
         clefs.sort()
@@ -146,7 +148,7 @@ class EasyOcr:
 
 
 class OCRReader:
-    def __init__(self, src, type="mp4", format_directory="jpg", all_info=None):
+    def __init__(self, src=None, type=None, format_directory="jpg", all_info=None):
         """
         ---this class should be used for comfortable reading text-information from frames---
 
@@ -159,15 +161,17 @@ class OCRReader:
         self.src = src
         self.all_info = all_info
         self.video = None
-        self.empty_frames = 0
+        self.empty_frames = 0   # global variable which shows how many frames passed without a number
         self.model = EasyOcr()
-        if type == "mp4" or type == "rtsp":
+        if type == "mp4":
             self.video = cv2.VideoCapture(src)
+            print("video in ocr")
         elif type == "dir":
             self.counter = 0
             self.imgs = get_filelist(src, [format_directory])
-        elif type == "img":
-            self.img = cv2.imread(src)
+            print("directory in ocr")
+        elif type == "rtsp":
+            print("rtsp in ocr")
         else:
             raise Exception("Not implemented reader type")
 
@@ -184,27 +188,13 @@ class OCRReader:
             self.empty_frames += 1
         if len(results):
             self.model.saver(results)
-            self.image_show(warped_img, results)
+            self.show_bbox(warped_img, results)
         elif self.empty_frames == max_wait_iterations:
             pif_paf = self.model.choose()
             if pif_paf:
                 self.all_info[time.time()] = pif_paf
                 print(self.empty_frames)
             self.empty_frames = 0
-        if watch:
-            show_image(warped_img, delay=0)
-
-    def image_run(self, cut_box=[(196, 400), (1235, 400), (1235, 1041), (196, 1041)], watch=True):
-        """
-        > watch - (True or False) watching image
-        > cut_box - coordinates in pixels for cutting frame [(top_left), (top_right), (bot_right), (bot_left)] (x, y)
-        """
-        warped_img = warp_image(self.img, np.array(eval(str(cut_box)), dtype="float32"))
-        results = self.model.predict(warped_img, 7)  # , draw_bbox
-        if len(results):
-            self.image_show(warped_img, results)
-            self.all_info[time.time()] = results
-            print(self.all_info)
         if watch:
             show_image(warped_img, delay=0)
 
@@ -224,7 +214,7 @@ class OCRReader:
             self.empty_frames += 1
         if len(results):
             self.model.saver(results)
-            self.image_show(warped_img, results)
+            self.show_bbox(warped_img, results)
         elif self.empty_frames == 1:
             pif_paf = self.model.choose()
             if pif_paf:
@@ -234,7 +224,35 @@ class OCRReader:
         if watch:
             show_image(warped_img, delay=0)
 
-    def image_show(self, img, results):
+    def main_ocr_run(self, local_src, max_wait_iterations=20):
+        """
+        > independent function
+        > should be used in Data Processor
+        if the number has not appeared yet returns None
+        if the number has appeared
+        """
+        results = self.model.predict(local_src, 7)  # , draw_bbox
+        print(len(results))
+        if len(results) == 0 and len(self.model.buff) > 0:
+            if self.empty_frames != max_wait_iterations:
+                self.empty_frames += 1
+                return results
+        if len(results):
+            self.model.saver(results)
+            # cv2.imwrite(f"./data/results_of_backend/{time.ctime()} - mid1.jpg", local_src)
+            self.show_bbox(local_src, results)
+            self.empty_frames = 0
+            return {"flag": "writing in the buffer now"}
+        elif self.empty_frames >= max_wait_iterations:
+            pif_paf = self.model.choose()
+            if pif_paf:
+                self.empty_frames = 0
+                return pif_paf
+                # print(self.empty_frames)
+        else:
+            return results
+
+    def show_bbox(self, img, results):
         tl = results["bbox"][1]
         br = results["bbox"][2]
         text = results["number"]
@@ -243,3 +261,6 @@ class OCRReader:
 
     def cleaner(self):
         self.empty_frames = 0
+
+
+
