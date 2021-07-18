@@ -60,7 +60,6 @@ class DataComposer:
             u'type': shift_type
         })
 
-
     def AddEvent(self, event_Datetime, event_Type, event_wagon, event_trainID, event_State, event_frames):
         """
 

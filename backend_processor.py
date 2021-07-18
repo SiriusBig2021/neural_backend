@@ -1,8 +1,10 @@
-import time
+import time as tm
 import traceback
 from DenseOpticalFlow import DenseOpticalFlow
-from models import OCRReader
+from models import OCRReader, FENN
 from utils import *
+from Firebase import *
+import torch
 
 ##########--config params--#################################################################
 # "bot1": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:554",
@@ -39,6 +41,15 @@ opt_param = {
         'flags': cv2.OPTFLOW_LK_GET_MIN_EIGENVALS
     }
 }
+
+nn_cfg = {
+    "device": "cpu",  # "cpu" or "cuda:0" for gpu
+    "input_shape": (3, 128, 128),  # ch, h, w
+    "classes": ['Empty', 'Fill'],
+    "pathToWeights": "./fill_classifier.pt"
+
+}
+
 max_wait_iteration = 4
 cut_cord_mid1 = [(0, 249), (1296, 249), (1296, 1065), (0, 1065)]
 do_imshow = True
@@ -48,7 +59,12 @@ do_save_results = True
 ##########--initialization--################################################################
 ocr = OCRReader(type="rtsp")
 op = DenseOpticalFlow(opt_param)
-FENN = None
+
+model = FENN(input_shape=nn_cfg["input_shape"], classes=nn_cfg["classes"], deviceType=nn_cfg["device"])
+model.load_state_dict(torch.load(nn_cfg["pathToWeights"]))
+
+DC = DataComposer()
+DC.CreateCurrentShift()  # TODO необходимо создавать вначале смены + trainID
 ############################################################################################
 
 ##########--text decoration--###############################################################
@@ -61,7 +77,7 @@ if __name__ == "__main__":
     os.setpgrp()
     try:
         readers = {cam: Reader(name=cam, src=cameras[cam], type="file") for cam in cameras}
-        time.sleep(2)
+        tm.sleep(2)
         top_buf = {}
         all_info = {}
         counter = 0
@@ -75,7 +91,7 @@ if __name__ == "__main__":
                     print(get_format_date(), "##", camera, "##", "Error", reader_out["error"])
                     for c in readers:
                         readers[c].reset()
-                        time.sleep(2)
+                        tm.sleep(2)
                         print(c, " - have been reseated successfully")
                     break
                 frame = reader_out["frame"]
@@ -90,9 +106,9 @@ if __name__ == "__main__":
                 # if not is_movement:
                 #     continue
 
-                first_t = time.time()
+                first_t = tm.time()
                 movement_direct = op.getMoveDirection(cut_frame_mid1)
-                second_t = time.time()
+                second_t = tm.time()
                 print("\r", second_t - first_t, f"direction {movement_direct}", end="")
                 if movement_direct != "wait" and "up" and "down":
                     ocr_handler = ocr.main_ocr_run(cut_frame_mid1, max_wait_iteration)
@@ -109,8 +125,9 @@ if __name__ == "__main__":
                         print("wagon with number, and it goes to the buffer")
 
                     elif "prob" in ocr_handler:
-                        # fn_prob = FENN.get_prediction(top_buf["frame"]).getClassName()
-                        # top_buf["state"] = fn_prob
+                        predict = model.predict(top_buf["frame"])
+                        predict_class, predict_prob = predict["className"], predict["accuracy"],
+                        top_buf["state"] = predict_class
                         #################--Drawing_bbox--#################################
                         text = ocr_handler["number"]
                         cv2.putText(ocr_handler["frame"], movement_direct, (30, 40), fontFace, fontScale, color, thickness)
@@ -132,6 +149,30 @@ if __name__ == "__main__":
                                              "mid": {"frame": ocr_handler["frame"],
                                                      "number": ocr_handler["number"]}}
 
+                        event = {
+                            "time": top_buf["time"],
+                            "direction": "arrive" if top_buf["top"]["direction"] == "left" else "departure",
+                            "number": text,
+                            "trainID": 4,
+                            "state": top_buf["state"],
+                            "event_frames": [
+                                {
+                                    'camera': 'top',
+                                    'imagePath': f"./data/results_of_backend/{top_buf['time']} - top.jpg"
+                                },
+                                {
+                                    'camera': 'mid',
+                                    'imagePath': f"./data/results_of_backend/{top_buf['time']} - mid1.jpg"
+                                }]
+                        }
+
+                        DC.AddEvent(event["time"],
+                                    event["direction"],
+                                    event["number"],
+                                    event["trainID"],
+                                    event["state"],
+                                    event["event_frames"]
+                                    )
                         top_buf.clear()
 
             # if len(all_info) == 0:
