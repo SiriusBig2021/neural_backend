@@ -28,6 +28,8 @@ while True:
 
     try:
         img = cv2.imread(imgs[cc])
+
+        mode
     except:
         exit()
     cc += 1

@@ -7,6 +7,46 @@ import time
 from utils import warp_image, show_image, get_filelist, draw_bbox
 import cv2
 import pytesseract
+from torchvision.models import mobilenet
+
+
+# NN for classification wagon status(Fill or Empty)
+class FENN(nn.Module):
+
+    def __init__(self, input_shape):
+        super(FENN, self).__init__()
+
+        self.input_shape = input_shape
+        self.network = nn.Sequential(
+
+            nn.Conv2d(in_channels=input_shape[0], out_channels=32, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2),
+
+            nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2),
+
+            nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2),
+
+            nn.Flatten(),
+            nn.Linear(self.input_shape[1] * 2 * 8 * 8, 1024),
+            nn.ReLU(),
+            nn.Linear(1024, 512),
+            nn.ReLU(),
+            nn.Linear(512, 10)
+        )
+
+    def forward(self, x):
+        return self.network(x)
 
 
 class CNN(nn.Module):
@@ -27,7 +67,7 @@ class CNN(nn.Module):
 
         self.pool = nn.MaxPool2d(2,2)
         self.fl = nn.Flatten()
-        self.fc1 = nn.Linear(self.input_shape[1]*2*7*7, 128)
+        self.fc1 = nn.Linear(self.input_shape[1]*2*8*8, 128)
         self.fc2 = nn.Linear(128, 10)
         self.dropout = torch.nn.Dropout(p=0.5)
         self.relu = torch.nn.ReLU()
@@ -44,6 +84,7 @@ class CNN(nn.Module):
         x = self.pool(x)
         # print(x.shape)
         x = self.fl(x)
+        print(x.shape)
         # x = x.reshape(x.size(0), -1)
         x = self.fc1(x)
         x = self.dropout(x)

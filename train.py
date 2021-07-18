@@ -25,10 +25,10 @@ if __name__ == "__main__":
 
             "tag": "mnist_classifier",
 
-            "model": "MLP",
+            "model": "CNN",
             "device": "cuda:0",  # "cpu" or "cuda:0" for gpu
 
-            "input_shape": (1, 28, 28),  # ch, h, w
+            "input_shape": (3, 32, 32),  # ch, h, w
 
             "classes": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
 
@@ -55,6 +55,9 @@ if __name__ == "__main__":
         if cfg["model"] == "MLP":
             model = MLP(input_shape=cfg["input_shape"])
 
+        if cfg["model"] == "CNN":
+            model = FENN(input_shape=cfg["input_shape"])
+
         if model is None:
             raise Exception("Not implemented model %s. Exit." % cfg["model"])
 
@@ -78,11 +81,11 @@ if __name__ == "__main__":
             # transforms.ColorJitter(brightness=(0.1, 1.5), contrast=(0, 4), saturation=(0, 4), hue=(-0.5, 0.5)),
         ])
 
-        train_set = MNIST("./data", train=True, download=False, transform=transform)
-        test_set = MNIST("./data", train=False, download=False, transform=transform)
+        # train_set = MNIST("./data/datasets", train=True, download=False, transform=transform)
+        # test_set = MNIST("./data/datasets", train=False, download=False, transform=transform)
 
-        # train_set = CIFAR10("./data", train=True, download=False, transform=transform)
-        # test_set = CIFAR10("./data", train=False, download=False, transform=transform)
+        train_set = CIFAR10("./data/datasets", train=True, download=True, transform=transform)
+        test_set = CIFAR10("./data/datasets", train=False, download=True, transform=transform)
 
         train_gen = torch.utils.data.DataLoader(train_set, batch_size=cfg["batch_size"], shuffle=True, num_workers=1)
         test_gen = torch.utils.data.DataLoader(test_set, batch_size=1, shuffle=False, num_workers=1)
@@ -99,10 +102,9 @@ if __name__ == "__main__":
 
                 images, labels = data[0], data[1]
 
-                # for im in images:
-                #     print(min(im), max(im))
-                #     im = np.transpose(im.numpy(), (1, 2, 0))
-                #     show_image(im)
+                for im in images:
+                    im = np.transpose(im.numpy(), (1, 2, 0))
+                    show_image(im)
 
                 inputs, labels = images.to(device), labels.to(device)
 
