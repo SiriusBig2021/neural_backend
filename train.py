@@ -14,56 +14,58 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from models import *
-from datagenerator import *
+# from datagenerator import *
 from utils import *
 
 if __name__ == "__main__":
 
     train_cfgs = [
 
-        {
-            "start": False,
-
-            "tag": "train_classifier",
-
-            "model": "MLP",
-            "device": "cpu",  # "cpu" or "cuda:0" for gpu
-            # TODO уточнить кол-во каналов
-            "input_shape": (1, 28, 28),  # ch, h, w
-
-            "classes": ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
-
-            "epochs": 9,
-            "init_lr": 0.001,
-            "batch_size": 16,
-
-            "loss": "binary",
-            "optimizer": "ReLU",
-
-            "save_to": "./tag.pt"
-
-        },
+        # {
+        #     "start": False,
+        #
+        #     "tag": "train_classifier",
+        #
+        #     "model": "CNN",
+        #     "device": "cpu",  # "cpu" or "cuda:0" for gpu
+        #
+        #     "input_shape": (3, 228, 228),  # ch, h, w
+        #
+        #     "classes": ['Train', 'None'],
+        #
+        #     "epochs": 9,
+        #     "init_lr": 0.001,
+        #     "batch_size": 16,
+        #
+        #     "loss": "binary",
+        #     "optimizer": "ReLU",
+        #
+        #     "save_to": "./tag.pt"
+        #
+        # },
 
         {
             "start": True,
 
             "tag": "fill_classifier",
 
-            "model": "MLP",
+            "model": "CNN",
             "device": "cpu",  # "cpu" or "cuda:0" for gpu
             # TODO уточнить кол-во каналов
-            "input_shape": (3, 64, 64),  # ch, h, w
+            "input_shape": (3, 128, 128),  # ch, h, w
 
             "classes": ['Empty', 'Fill'],
 
             "epochs": 9,
-            "init_lr": 0.001,
-            "batch_size": 16,
+            "init_lr": 0.0001,
+            "batch_size": 4,
 
             "loss": "binary",
             "optimizer": "ReLU",
 
-            "save_to": "./tag.pt"
+            "save_to": "./tag.pt",
+
+            "threshold": 0.5
 
         }
 
@@ -82,52 +84,66 @@ if __name__ == "__main__":
         if cfg["model"] == "MLP":
             model = MLP(input_shape=cfg["input_shape"], classes=cfg["classes"])
 
+        elif cfg['model'] == 'CNN':
+            # model = CNN(input_shape=cfg["input_shape"], classes=cfg["classes"])
+            model = FENN(input_shape=cfg['input_shape'], classes=cfg["classes"])
+
         if model is None:
             raise Exception("Not implemented model %s. Exit." % cfg["model"])
 
-        model.to(device)
+        # model.to(device)
 
-        summary(model, model.input_shape)
+        # summary(model, model.input_shape)
 
         loss_function = nn.CrossEntropyLoss(reduction='mean')
         # loss_function = nn.BCELoss()
 
         optimizer = torch.optim.Adam(model.parameters(), lr=cfg["init_lr"])
 
-        # TODO data generator
+
 
         transform = transforms.Compose([
-            transforms.ToTensor(),
+            # transforms.ToTensor(),
             # transforms.RandomHorizontalFlip(p=0.5),
-            # transforms.RandomRotation(degrees=15),
-            # transforms.GaussianBlur(kernel_size=25),
-            # transforms.RandomGrayscale(p=0.5),
+            # transforms.RandomRotation(degrees=45),
+            transforms.GaussianBlur(kernel_size=15),
+            transforms.RandomGrayscale(p=0.5),
             # transforms.ColorJitter(brightness=(0.1, 1.5), contrast=(0, 4), saturation=(0, 4), hue=(-0.5, 0.5)),
         ])
 
-        train_set = MNIST("./data", train=True, download=True, transform=transform)
-        test_set = MNIST("./data", train=False, download=True, transform=transform)
+        train_set = CustomDataset(
+            metaFile="/home/sauce-chili/Sirius/neural_backend/data/Dataset/Fill_or_Empry_Dataset/trainMetaFile.classes",
+            imagesPath="/home/sauce-chili/Sirius/neural_backend/data/Dataset/Fill_or_Empry_Dataset/Imgs",
+            imgSize=cfg["input_shape"][1:],
+            modelType="fillClassifier",
+            transform=transform)
 
-        tr_set = CustomDataset(metaFile="./data/Dataset/trainMetaFile.classes",
-                               imagesPath="./data/Dataset/SlicedImg",
-                               modelType="fillClassifier",
-                               transform=transform)
-
-        # train_set = CIFAR10("./data", train=True, download=False, transform=transform)
-        # test_set = CIFAR10("./data", train=False, download=False, transform=transform)
+        test_set = CustomDataset(
+            metaFile='/home/sauce-chili/Sirius/neural_backend/data/Dataset/Fill_or_Empry_Dataset/testMetaFile.classes',
+            imagesPath="/home/sauce-chili/Sirius/neural_backend/data/Dataset/Fill_or_Empry_Dataset/Imgs",
+            imgSize=cfg["input_shape"][1:],
+            modelType='fillClassifier',
+            transform=transform
+        )
 
         train_gen = torch.utils.data.DataLoader(train_set, batch_size=cfg["batch_size"], shuffle=True, num_workers=1)
-        test_gen = torch.utils.data.DataLoader(test_set, batch_size=1, shuffle=False, num_workers=1)
+        test_gen = torch.utils.data.DataLoader(test_set, batch_size=cfg['batch_size'], shuffle=False, num_workers=1)
 
-        tr_gen = torch.utils.data.DataLoader(tr_set, batch_size=4, shuffle=True, num_workers=1)
+        # train_gen = torch.utils.data.DataLoader(train_set, batch_size=4, shuffle=True, num_workers=1)
 
         for epoch in range(cfg["epochs"]):
 
-            # # Train
+            # Train unit
 
-            pbar = tqdm(enumerate(tr_gen), total=len(tr_gen))
+            pbar = tqdm(enumerate(train_gen), total=len(train_gen))
 
             loss_train = 0.0
+            correct = 0
+            c = 1000
+            tp = 0
+            tn = 0
+            fp = 0
+            fn = 0
 
             for i, data in pbar:
                 images, labels = data[0], data[1]
@@ -148,21 +164,47 @@ if __name__ == "__main__":
                 loss = loss_function(predicts, labels)
                 loss.backward()
                 optimizer.step()
+                # optimizer.zero_grad()
 
                 loss_train += loss.item()
 
+                # calc metrics
+                predicts = predicts.detach().numpy()
+                lbl = cfg["classes"][(labels.detach().numpy()[0])]
+                pred = cfg["classes"][predicts[0].argmax()]
+                prob = predicts[0][predicts[0].argmax()]
+
+                correct += int(pred == lbl)
+                tp += int((pred == lbl) and prob > cfg["threshold"])
+                tn += int(((lbl != pred) and (lbl is None)) and prob < cfg["threshold"])
+                fp += int((lbl != pred) and prob > cfg["threshold"])
+                fn += int((pred == lbl) and prob < cfg["threshold"])
+
+                if tp > 0 or fp > 0:
+                    accuracy = (tp + tn) / (tn + fn + fp + tp)
+                    precision = tp / (tp + fp)
+                else:
+                    accuracy = 0
+                    precision = 0
+
                 pbar.set_description(
-                    "Epoch %s/%s ; TrainLoss %.3f  " % (epoch + 1, cfg["epochs"], loss_train / (i + 1)))
+                    "Epoch %s/%s ; TrainLoss %.3f  ; Acc %.3f ; Pre %.3f" % (
+                        epoch + 1, cfg["epochs"], loss_train / (i + 1), accuracy, precision))
 
-            continue
-            # # Test
+            # Test unit
 
-            # TODO add metrics
             # acc https://androidkt.com/calculate-total-loss-and-accuracy-at-every-epoch-and-plot-using-matplotlib-in-pytorch/
 
             pbar = tqdm(enumerate(test_gen), total=len(test_gen))
 
             loss_test = 0.0
+            loss_train = 0.0
+            correct = 0
+            c = 1000
+            tp = 0
+            tn = 0
+            fp = 0
+            fn = 0
 
             with torch.no_grad():
 
@@ -182,8 +224,28 @@ if __name__ == "__main__":
 
                     loss_test += loss.item()
 
+                    # calc metrics
+                    predicts = predicts.detach().numpy()
+                    lbl = cfg["classes"][(labels.detach().numpy()[0])]
+                    pred = cfg["classes"][predicts[0].argmax()]
+                    prob = predicts[0][predicts[0].argmax()]
+
+                    correct += int(pred == lbl)
+                    tp += int((pred == lbl) and prob > cfg["threshold"])
+                    tn += int(((lbl != pred) and (lbl is None)) and prob < cfg["threshold"])
+                    fp += int((lbl != pred) and prob > cfg["threshold"])
+                    fn += int((pred == lbl) and prob < cfg["threshold"])
+
+                    if tp > 0 or fp > 0:
+                        accuracy = (tp + tn) / (tn + fn + fp + tp)
+                        precision = tp / (tp + fp)
+                    else:
+                        accuracy = 0
+                        precision = 0
+
                     pbar.set_description(
-                        "Epoch %s/%s ; TestLoss  %.3f  " % (epoch + 1, cfg["epochs"], loss_test / (i + 1)))
+                        "Epoch %s/%s ; TrainLoss %.3f  ; Acc %.3f ; Pre %.3f" % (
+                            epoch + 1, cfg["epochs"], loss_train / (i + 1), accuracy, precision))
 
             # # Save model
             print("Saving weights to %s" % cfg["save_to"])
