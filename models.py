@@ -119,6 +119,8 @@ class EasyOcr:
             all_items[clef] = res
             if len(text) < minsize:
                 continue
+            elif text.isdigit() == 0:
+                continue
             else:
                 clefs.append(clef)
         clefs.sort()
@@ -237,6 +239,12 @@ class OCRReader:
                 return results
         if len(results):
             self.model.saver(results)
+            #TODO-----------------------------------------------------------------------------
+            show_image(results["frame"], win_name="ghghghg", delay=1)
+            self.show_bbox(local_src, results)
+            cv2.imwrite(f"./data/results_of_backend/{time.ctime()} - mid1.jpg", local_src)
+            #TODO-----------------------------------------------------------------------------
+            self.empty_frames = 0
             return {"flag": "writing in the buffer now"}
         elif self.empty_frames >= max_wait_iterations:
             pif_paf = self.model.choose()

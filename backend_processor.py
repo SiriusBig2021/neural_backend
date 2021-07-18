@@ -11,10 +11,21 @@ from utils import *
 # "mid2": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:557",
 #"top": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:558"
 
+# "mid1": "/home/home/projects/neural_backend/data/backend_processor_tests/mid_test_main.mp4",
+# "top": "/home/home/projects/neural_backend/data/backend_processor_tests/top_test_main.mp4"
+
 cameras = {
+
+    # "bot1": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:554",
+    # "bot2": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:555",
+    # "mid1": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:556",
+    # "mid2": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:557",
+    # "top": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:558"
+
     "mid1": "/home/home/projects/neural_backend/data/backend_processor_tests/mid_test_main.mp4",
     "top": "/home/home/projects/neural_backend/data/backend_processor_tests/top_test_main.mp4"
 }
+
 opt_param = {
     'threshold_magnitude': 9,
     'size_accumulation': 6,
@@ -29,8 +40,9 @@ opt_param = {
     }
 }
 max_wait_iteration = 4
-cut_cord_mid1 = [(288, 302), (1209, 302), (1209, 1041), (288, 1041)]
+cut_cord_mid1 = [(0, 249), (1296, 249), (1296, 1065), (0, 1065)]
 do_imshow = True
+do_save_results = False
 ############################################################################################
 
 ##########--initialization--################################################################
@@ -91,20 +103,29 @@ if __name__ == "__main__":
                     if ("flag" in ocr_handler) and (len(top_buf) == 0):
                         moment_frames["top"]["direction"] = movement_direct
                         top_buf = moment_frames["top"]
-                        top_buf["time"] = time.ctime(time.time())
+                        top_buf["time"] = get_format_date(date_format="%d-%m-%YT%H:%M:%S")
                         print(len(top_buf))
                         print("wagon with number, and it goes to the buffer")
 
                     elif "prob" in ocr_handler:
                         # fn_prob = FENN.get_prediction(top_buf["frame"]).getClassName()
                         # top_buf["state"] = fn_prob
-                        #################--Drawing bbox--#################################
+                        #################--Drawing_bbox--#################################
                         tl = ocr_handler["bbox"][1]
                         br = ocr_handler["bbox"][2]
                         text = ocr_handler["number"]
                         cv2.rectangle(cut_frame_mid1, tl, br, (0, 255, 0), 2)
                         cv2.putText(cut_frame_mid1, text, (tl[0], tl[1] - 10), fontFace, fontScale, color, thickness)
-                        cv2.putText(cut_frame_mid1, text, (tl[0], tl[1] - 10), fontFace, fontScale, color, thickness)
+                        cv2.putText(cut_frame_mid1, movement_direct, (30, 40), fontFace, fontScale, color, thickness)
+                        cv2.putText(top_buf["frame"], top_buf["time"], (30, 40), fontFace, fontScale, color, thickness)
+                        ##################################################################
+                        ################--Save_image--####################################
+                        #TODO-----------------------------------------------------------------------------------
+                        cv2.imwrite(f"./data/results_of_backend/{top_buf['time']} - mid-MAIN.jpg", cut_frame_mid1)
+                        #TODO-----------------------------------------------------------------------------------
+                        if do_save_results:
+                            cv2.imwrite(f"./data/results_of_backend/{top_buf['time']} - mid1.jpg", cut_frame_mid1)
+                            cv2.imwrite(f"./data/results_of_backend/{top_buf['time']} - top.jpg", top_buf["frame"])
                         ##################################################################
                         counter += 1
                         all_info[counter] = {"top": {"frame": top_buf["frame"],
@@ -112,6 +133,7 @@ if __name__ == "__main__":
                                                      "state": "top_buf['state']"},
                                              "mid": {"frame": ocr_handler["frame"],
                                                      "number": ocr_handler["number"]}}
+
                         top_buf.clear()
                         # print(f"номер вагона = {ocr_handler['number']}")
 
@@ -119,15 +141,14 @@ if __name__ == "__main__":
             #     print("\r", "нет значений", end="")
             # else:
             #     print(all_info)
-            #TODO записывать изображения с двух камер попарно + добавлять на изображение "номер" + "направление движения
-            # "
+
             ############################--Images showing--#############################################################
             if do_imshow:
-                cv2.putText(cut_frame_mid1, movement_direct, (30, 40), fontFace, fontScale, color, thickness)
                 show_image(cut_frame_mid1, win_name="mid1_circumcised", delay=1)
                 for i in moment_frames:
                     show_image(moment_frames[i]["frame"], win_name=i, delay=1)
             ##########################################################################################################
+
             if len(all_info) > 0:
                 print(len(all_info))
             moment_frames.clear()
