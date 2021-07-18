@@ -4,51 +4,112 @@ import torch.nn.functional as F
 from easyocr import Reader
 import numpy as np
 import time
-from utils import warp_image, show_image, get_filelist, draw_bbox
+from torchsummary import summary
+from utils import warp_image, show_image, get_filelist
 import cv2
-import pytesseract
+
 
 
 class CNN(nn.Module):
-    def __init__(self, input_shape):
-        super(CNN, self).__init__()
+
+    def accuracy(self, outputs, labels):
+        _, preds = torch.max(outputs, dim=1)
+        return torch.tensor(torch.sum(preds == labels).item() / len(preds))
+
+    def training_step(self, batch):
+        images, labels = batch
+        out = self(images)  # Generate predictions
+        loss = F.cross_entropy(out, labels)  # Calculate loss
+        return loss
+
+    def validation_step(self, batch):
+        images, labels = batch
+        out = self(images)  # Generate predictions
+        loss = F.cross_entropy(out, labels)  # Calculate loss
+        acc = self.accuracy(out, labels)  # Calculate accuracy
+        return {'val_loss': loss.detach(), 'val_acc': acc}
+
+    def validation_epoch_end(self, outputs):
+        batch_losses = [x['val_loss'] for x in outputs]
+        epoch_loss = torch.stack(batch_losses).mean()  # Combine losses
+        batch_accs = [x['val_acc'] for x in outputs]
+        epoch_acc = torch.stack(batch_accs).mean()  # Combine accuracies
+        return {'val_loss': epoch_loss.item(), 'val_acc': epoch_acc.item()}
+
+    def epoch_end(self, epoch, result):
+        print("Epoch [{}], train_loss: {:.4f}, val_loss: {:.4f}, val_acc: {:.4f}".format(
+            epoch, result['train_loss'], result['val_loss'], result['val_acc']))
+
+
+# NN for classification wagon status(Fill or Empty)
+class FENN(CNN):
+
+    def __init__(self, input_shape, classes: list, deviceType):
+        super(FENN, self).__init__()
 
         self.input_shape = input_shape
+        self.classes = classes
+        self.device = torch.device(deviceType)
+        self.to(device=self.device)
+        self.network = nn.Sequential(
 
-        self.conv1 = nn.Conv2d(in_channels=self.input_shape[0],
-                               out_channels=self.input_shape[1],
-                               kernel_size=3,
-                               padding=1)
+            nn.Conv2d(in_channels=input_shape[0], out_channels=32, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2),
 
-        self.conv2 = nn.Conv2d(in_channels=self.input_shape[1],
-                               out_channels=self.input_shape[1]*2,
-                               kernel_size=3,
-                               padding=1)
+            nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2),
 
-        self.pool = nn.MaxPool2d(2,2)
-        self.fl = nn.Flatten()
-        self.fc1 = nn.Linear(self.input_shape[1]*2*7*7, 128)
-        self.fc2 = nn.Linear(128, 10)
-        self.dropout = torch.nn.Dropout(p=0.5)
-        self.relu = torch.nn.ReLU()
+            nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2),
+
+            nn.Flatten(),
+            nn.Linear(self.input_shape[1] * 2 * 16 * 16, 1024),
+            nn.ReLU(),
+            nn.Linear(1024, 512),
+            nn.ReLU(),
+            nn.Linear(512, len(classes))
+        )
+        summary(self, self.input_shape)
 
     def forward(self, x):
-        x = self.conv1(x)
-        # print(x.shape)
-        x = self.relu(x)
-        x = self.pool(x)
-        # print(x.shape)
-        x = self.conv2(x)
-        # print(x.shape)
-        x = self.relu(x)
-        x = self.pool(x)
-        # print(x.shape)
-        x = self.fl(x)
-        # x = x.reshape(x.size(0), -1)
-        x = self.fc1(x)
-        x = self.dropout(x)
-        prediction = self.fc2(x)
-        return prediction
+        return self.network(x)
+
+    def predict(self, image):
+
+        predict = {}
+
+        with torch.no_grad():
+            # print(self.input_shape[1:])
+            # print(image)
+            img = cv2.resize(image, self.input_shape[1:]) / 255.0
+            img_tensor = torch.from_numpy(img)
+            img_tensor = img_tensor.permute(2, 0, 1).float()
+            img_tensor = torch.unsqueeze(img_tensor, 0)
+
+            # forward + backward + optimize
+
+            img_tensor = img_tensor.to(self.device)
+            predicts = torch.softmax(self.forward(img_tensor), dim=1).cpu().numpy()[0]
+
+            # predicts = predicts.cpu().numpy()
+            className = self.classes[predicts.argmax()]
+            # print(className, predicts)
+            accuracy = predicts[predicts.argmax()]
+            # print(accuracy)
+
+            predict["className"] = className
+            predict["accuracy"] = accuracy
+
+        return predict
 
 
 class MLP(nn.Module):
@@ -59,7 +120,8 @@ class MLP(nn.Module):
         self.input_shape = input_shape
 
         self.fl = nn.Flatten()
-        self.fc1 = nn.Linear(in_features=self.input_shape[0]*self.input_shape[1]*self.input_shape[2], out_features=128)
+        self.fc1 = nn.Linear(in_features=self.input_shape[0] * self.input_shape[1] * self.input_shape[2],
+                             out_features=128)
         self.fc2 = nn.Linear(in_features=128, out_features=64)
         self.fc3 = nn.Linear(in_features=64, out_features=len(classes))
         self.relu = nn.ReLU()
@@ -88,6 +150,7 @@ class MLP(nn.Module):
 
 class EasyOcr:
     """class with EasyOcr and sorting algorithm"""
+
     def __init__(self):
         self.model = Reader(["en"], gpu=True, verbose=False)
         self.buff = {}
@@ -175,7 +238,8 @@ class OCRReader:
         else:
             raise Exception("Not implemented reader type")
 
-    def video_run(self, max_wait_iterations=20, cut_box=[(196, 400), (1235, 400), (1235, 1041), (196, 1041)], watch=True):
+    def video_run(self, max_wait_iterations=20, cut_box=[(196, 400), (1235, 400), (1235, 1041), (196, 1041)],
+                  watch=True):
         """
         > max_wait_iterations - delay after choosing final info for saving
         > watch - (True or False) watching video
