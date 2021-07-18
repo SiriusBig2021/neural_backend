@@ -6,14 +6,15 @@ cfg = {
     "device": "cpu",  # "cpu" or "cuda:0" for gpu
     "input_shape": (3, 128, 128),  # ch, h, w
     "classes": ['Empty', 'Fill'],
-    "pathToWeights": ""
+    "pathToWeights": "/home/sauce-chili/Sirius/neural_backend/fill_classifier.pt"
 
 }
 
 
 def initCNN():
-    return FENN(input_shape=cfg["input_shape"], classes=cfg["classes"], deviceType=cfg["device"])\
-        .load_state_dict(torch.load(cfg["pathToWeights"]))
+    model = FENN(input_shape=cfg["input_shape"], classes=cfg["classes"], deviceType=cfg["device"])
+    model.load_state_dict(torch.load(cfg["pathToWeights"]))
+    return model
 
 
 if __name__ == "__main__":
