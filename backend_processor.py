@@ -24,9 +24,19 @@ cameras = {
     # "mid1": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:556",
     # "mid2": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:557",
     # "top": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:558"
-    #
-    "mid1": "./data/backend_processor_tests/mid_test_main.mp4",
-    "top": "./data/backend_processor_tests/top_test_main.mp4"
+
+    # "mid1": "./data/backend_processor_tests/mid_test_main.mp4",
+    # "top": "./data/backend_processor_tests/top_test_main.mp4"
+
+    # "mid1": "/home/ea/projects/SIRIUS21/data/backend_processor_tests/cutVideo.mp4",
+    # "top": "/home/ea/projects/SIRIUS21/data/backend_processor_tests/cutVideo1.mp4"
+
+    # "mid1": "/home/ea/projects/SIRIUS21/data/backend_processor_tests/cutVideo2.mp4",
+    # "top": "/home/ea/projects/SIRIUS21/data/backend_processor_tests/cutVideo3.mp4"
+
+    "mid1": "/home/ea/projects/SIRIUS21/data/backend_processor_tests/cutVideo4.mp4",
+    "top": "/home/ea/projects/SIRIUS21/data/backend_processor_tests/cutVideo5.mp4"
+
 }
 
 opt_param = {
@@ -44,6 +54,7 @@ opt_param = {
 }
 
 nn_cfg = {
+
     "device": "cpu",  # "cpu" or "cuda:0" for gpu
     "input_shape": (3, 128, 128),  # ch, h, w
     "classes": ['empty', 'fill'],
@@ -73,6 +84,9 @@ fontFace = cv2.FONT_HERSHEY_SIMPLEX
 fontScale = 1
 color = (0, 255, 0)
 thickness = 2
+
+rr = cv2.namedWindow("result")
+wk = 0
 ############################################################################################
 if __name__ == "__main__":
     os.setpgrp()
@@ -108,8 +122,8 @@ if __name__ == "__main__":
                 #     continue
 
                 first_t = tm.time()
-                movement_direct = "left"
-                # movement_direct = op.getMoveDirection(cut_frame_mid1)
+                # movement_direct = "left"
+                movement_direct = op.getMoveDirection(cut_frame_mid1)
                 second_t = tm.time()
                 print("\r", second_t - first_t, f"direction {movement_direct}", end="")
                 if movement_direct != "wait" and "up" and "down":
@@ -187,7 +201,14 @@ if __name__ == "__main__":
             ############################--Images showing--#############################################################
             if do_imshow:
                 cv2.putText(cut_frame_mid1, movement_direct, (30, 40), fontFace, fontScale, color, thickness)
-                show_image(cut_frame_mid1, win_name="mid1_circumcised", delay=1)
+                # show_image(cut_frame_mid1, win_name="mid1_circumcised", delay=1)
+                cv2.imshow("result", cut_frame_mid1)
+                key = cv2.waitKey(wk) & 0xff
+                if key == ord('p'):
+                    if wk == 0:
+                        wk = 1
+                    elif wk == 1:
+                        wk = 0
                 for i in moment_frames:
                     show_image(moment_frames[i]["frame"], win_name=i, delay=1)
             ##########################################################################################################

@@ -288,7 +288,12 @@ class OCRReader:
         tl = results["bbox"][1]
         br = results["bbox"][2]
         text = results["number"]
-        cv2.rectangle(img, tl, br, (0, 255, 0), 2)
+
+        cv2.line(img, results["bbox"][0], results["bbox"][2], (222, 222, 222), 3)
+        cv2.line(img, results["bbox"][2], results["bbox"][3], (222, 222, 222), 3)
+        cv2.line(img, results["bbox"][3], results["bbox"][1], (222, 222, 222), 3)
+        cv2.line(img, results["bbox"][1], results["bbox"][0], (222, 222, 222), 3)
+        # cv2.rectangle(img, tl, br, (0, 255, 0), 2)
         cv2.putText(img, text, (tl[0], tl[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
 
     def cleaner(self):
