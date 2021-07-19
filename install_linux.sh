@@ -43,8 +43,8 @@ mkvirtualenv -p "$python_v" "$env_name"
 "$HOME"/.virtualenvs/"$env_name"/bin/pip install numpy==1.18.5
 "$HOME"/.virtualenvs/"$env_name"/bin/pip install opencv-python==4.1.2
 "$HOME"/.virtualenvs/"$env_name"/bin/pip install pyyaml
-"$HOME"/.virtualenvs/"$env_name"/bin/pip install torch==1.7.0
-"$HOME"/.virtualenvs/"$env_name"/bin/pip install torchvision==0.8.1
+"$HOME"/.virtualenvs/"$env_name"/bin/pip install torch==1.8.1
+"$HOME"/.virtualenvs/"$env_name"/bin/pip install torchvision==0.9.1
 "$HOME"/.virtualenvs/"$env_name"/bin/pip install tqdm==4.41.0
 
 echo -e "# # # ENVIRONMENT $env_name CREATED # # #"

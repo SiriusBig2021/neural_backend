@@ -4,51 +4,80 @@ import torch.nn.functional as F
 from easyocr import Reader
 import numpy as np
 import time
-from utils import warp_image, show_image, get_filelist, draw_bbox
+from torchsummary import summary
+from utils import warp_image, show_image, get_filelist
 import cv2
-import pytesseract
 
 
-class CNN(nn.Module):
-    def __init__(self, input_shape):
-        super(CNN, self).__init__()
+# NN for classification wagon status(Fill or Empty)
+class FENN(nn.Module):
+
+    def __init__(self, input_shape, classes: list, deviceType):
+        super(FENN, self).__init__()
 
         self.input_shape = input_shape
+        self.classes = classes
+        self.device = torch.device(deviceType)
+        self.to(device=self.device)
+        self.network = nn.Sequential(
 
-        self.conv1 = nn.Conv2d(in_channels=self.input_shape[0],
-                               out_channels=self.input_shape[1],
-                               kernel_size=3,
-                               padding=1)
+            nn.Conv2d(in_channels=input_shape[0], out_channels=32, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2),
 
-        self.conv2 = nn.Conv2d(in_channels=self.input_shape[1],
-                               out_channels=self.input_shape[1]*2,
-                               kernel_size=3,
-                               padding=1)
+            nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2),
 
-        self.pool = nn.MaxPool2d(2,2)
-        self.fl = nn.Flatten()
-        self.fc1 = nn.Linear(self.input_shape[1]*2*7*7, 128)
-        self.fc2 = nn.Linear(128, 10)
-        self.dropout = torch.nn.Dropout(p=0.5)
-        self.relu = torch.nn.ReLU()
+            nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2, 2),
+
+            nn.Flatten(),
+            nn.Linear(self.input_shape[1] * 2 * 16 * 16, 256),
+            nn.ReLU(),
+            nn.Linear(256, 128),
+            nn.ReLU(),
+            nn.Linear(128, len(classes))
+        )
+        # summary(self, self.input_shape)
 
     def forward(self, x):
-        x = self.conv1(x)
-        # print(x.shape)
-        x = self.relu(x)
-        x = self.pool(x)
-        # print(x.shape)
-        x = self.conv2(x)
-        # print(x.shape)
-        x = self.relu(x)
-        x = self.pool(x)
-        # print(x.shape)
-        x = self.fl(x)
-        # x = x.reshape(x.size(0), -1)
-        x = self.fc1(x)
-        x = self.dropout(x)
-        prediction = self.fc2(x)
-        return prediction
+        return self.network(x)
+
+    def predict(self, image):
+
+        predict = {}
+
+        with torch.no_grad():
+            # print(self.input_shape[1:])
+            # print(image)
+            img = cv2.resize(image, self.input_shape[1:]) / 255.0
+            img_tensor = torch.from_numpy(img)
+            img_tensor = img_tensor.permute(2, 0, 1).float()
+            img_tensor = torch.unsqueeze(img_tensor, 0)
+
+            # forward + backward + optimize
+
+            img_tensor = img_tensor.to(self.device)
+            predicts = torch.softmax(self.forward(img_tensor), dim=1).cpu().numpy()[0]
+
+            # predicts = predicts.cpu().numpy()
+            className = self.classes[predicts.argmax()]
+            # print(className, predicts)
+            accuracy = predicts[predicts.argmax()]
+            # print(accuracy)
+
+            predict["className"] = className
+            predict["accuracy"] = accuracy
+
+        return predict
 
 
 class MLP(nn.Module):
@@ -59,7 +88,8 @@ class MLP(nn.Module):
         self.input_shape = input_shape
 
         self.fl = nn.Flatten()
-        self.fc1 = nn.Linear(in_features=self.input_shape[0]*self.input_shape[1]*self.input_shape[2], out_features=128)
+        self.fc1 = nn.Linear(in_features=self.input_shape[0] * self.input_shape[1] * self.input_shape[2],
+                             out_features=128)
         self.fc2 = nn.Linear(in_features=128, out_features=64)
         self.fc3 = nn.Linear(in_features=64, out_features=len(classes))
         self.relu = nn.ReLU()
@@ -88,6 +118,7 @@ class MLP(nn.Module):
 
 class EasyOcr:
     """class with EasyOcr and sorting algorithm"""
+
     def __init__(self):
         self.model = Reader(["en"], gpu=True, verbose=False)
         self.buff = {}
@@ -175,7 +206,8 @@ class OCRReader:
         else:
             raise Exception("Not implemented reader type")
 
-    def video_run(self, max_wait_iterations=20, cut_box=[(196, 400), (1235, 400), (1235, 1041), (196, 1041)], watch=True):
+    def video_run(self, max_wait_iterations=20, cut_box=[(196, 400), (1235, 400), (1235, 1041), (196, 1041)],
+                  watch=True):
         """
         > max_wait_iterations - delay after choosing final info for saving
         > watch - (True or False) watching video
@@ -256,7 +288,12 @@ class OCRReader:
         tl = results["bbox"][1]
         br = results["bbox"][2]
         text = results["number"]
-        cv2.rectangle(img, tl, br, (0, 255, 0), 2)
+
+        cv2.line(img, results["bbox"][0], results["bbox"][2], (222, 222, 222), 3)
+        cv2.line(img, results["bbox"][2], results["bbox"][3], (222, 222, 222), 3)
+        cv2.line(img, results["bbox"][3], results["bbox"][1], (222, 222, 222), 3)
+        cv2.line(img, results["bbox"][1], results["bbox"][0], (222, 222, 222), 3)
+        # cv2.rectangle(img, tl, br, (0, 255, 0), 2)
         cv2.putText(img, text, (tl[0], tl[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
 
     def cleaner(self):

@@ -1,3 +1,5 @@
+import copy
+
 import pytesseract
 import cv2
 import numpy as np
@@ -22,9 +24,12 @@ cap = cv2.VideoCapture(v)
 model = EasyOcr()
 all_info = {}     # dict which is considered all frames with numbers and their optional information
 while True:
+    cc += 1
 
     try:
         img = cv2.imread(imgs[cc])
+
+        mode
     except:
         exit()
     cc += 1
@@ -53,4 +58,6 @@ while True:
 
     show_image(warped_img, delay=0)
 
+    if key == ord("p"):
+        wk = 0 if wk == 1 else 1
 
