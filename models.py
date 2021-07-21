@@ -10,6 +10,7 @@ from torchsummary import summary
 from utils import warp_image, show_image, get_filelist
 import cv2
 from Firebase import *
+import os
 
 
 # NN for classification wagon status(Fill or Empty)
@@ -302,12 +303,11 @@ class OCRReader:
     def cleaner(self):
         self.empty_frames = 0
 
+
 class FB_send:
     def __init__(self):
         self.q = multiprocessing.Queue(maxsize=1)
-        self.DC = DataComposer()
-        self.DC.CreateCurrentShift()
-        self.proc = multiprocessing.Process(target=self.send_to_FB())
+        self.proc = multiprocessing.Process(target=self.send_to_FB)
         self.proc.start()
 
     def send_to_process(self, event: dict):
@@ -316,10 +316,13 @@ class FB_send:
             self.q.put(event)
 
     def send_to_FB(self):
+        print(os.getpid())
+        self.DC = DataComposer()
+        self.DC.CreateCurrentShift()
         while True:
             try:
-                out = self.q.get()
-                if out is not None:
+                if not(self.q.empty()):
+                    out = self.q.get()
                     self.DC.AddEvent(out["time"],
                                      out["direction"],
                                      out["number"],

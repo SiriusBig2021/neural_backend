@@ -16,8 +16,8 @@ cameras = {
     # "mid2": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:557",
     # "top": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:558"
 
-    # "mid1": "./data/backend_processor_tests/mid_test_main.mp4",
-    # "top": "./data/backend_processor_tests/top_test_main.mp4"
+    "mid1": "./data/backend_processor_tests/mid_test_main.mp4",
+    "top": "./data/backend_processor_tests/top_test_main.mp4"
 
     # "mid1": "/home/ea/projects/SIRIUS21/data/backend_processor_tests/cutVideo.mp4",
     # "top": "/home/ea/projects/SIRIUS21/data/backend_processor_tests/cutVideo1.mp4"
@@ -25,8 +25,8 @@ cameras = {
     # "mid1": "/home/ea/projects/SIRIUS21/data/backend_processor_tests/cutVideo2.mp4",
     # "top": "/home/ea/projects/SIRIUS21/data/backend_processor_tests/cutVideo3.mp4"
 
-    "mid1": "/home/ea/projects/SIRIUS21/data/backend_processor_tests/cutVideo4.mp4",
-    "top": "/home/ea/projects/SIRIUS21/data/backend_processor_tests/cutVideo5.mp4"
+    # "mid1": "/home/ea/projects/SIRIUS21/data/backend_processor_tests/cutVideo4.mp4",
+    # "top": "/home/ea/projects/SIRIUS21/data/backend_processor_tests/cutVideo5.mp4"
 
 }
 
@@ -55,7 +55,7 @@ nn_cfg = {
 
 max_wait_iteration = 4
 cut_cord_mid1 = [(0, 249), (1296, 249), (1296, 1065), (0, 1065)]
-do_imshow = True
+do_imshow = False
 do_save_results = True
 ############################################################################################
 
@@ -66,7 +66,9 @@ op = DenseOpticalFlow(opt_param)
 model = FENN(input_shape=nn_cfg["input_shape"], classes=nn_cfg["classes"], deviceType=nn_cfg["device"])
 model.load_state_dict(torch.load(nn_cfg["pathToWeights"]))
 
+print(os.getpid())
 firebase = FB_send()
+print(2)
 # DC = DataComposer()
 # DC.CreateCurrentShift()  # TODO необходимо создавать вначале смены + trainID
 ############################################################################################
@@ -108,10 +110,6 @@ if __name__ == "__main__":
             else:
                 cut_frame_mid1 = warp_image(moment_frames["mid1"]["frame"], np.array(eval(str(cut_cord_mid1)), dtype="float32"))
 
-                # is_movement = NeuralModel(frame)
-                # if not is_movement:
-                #     continue
-
                 first_t = tm.time()
                 # movement_direct = "left"
                 movement_direct = op.getMoveDirection(cut_frame_mid1)
@@ -119,9 +117,6 @@ if __name__ == "__main__":
                 print("\r", second_t - first_t, f"direction {movement_direct}", end="")
                 if movement_direct != "wait" and "up" and "down":
                     ocr_handler = ocr.main_ocr_run(cut_frame_mid1, max_wait_iteration)
-
-                    # print("\n", ocr_handler)
-                    # print("empty frames - ", ocr.empty_frames)
 
                     if ("flag" in ocr_handler) and (len(top_buf) == 0):
                         moment_frames["top"]["direction"] = movement_direct
@@ -205,9 +200,6 @@ if __name__ == "__main__":
                 for i in moment_frames:
                     show_image(moment_frames[i]["frame"], win_name=i, delay=1)
             ##########################################################################################################
-
-            # if len(all_info) > 0:
-            #     print(len(all_info))
             moment_frames.clear()
 
     except:
