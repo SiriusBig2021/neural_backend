@@ -2,21 +2,12 @@ import time
 import time as tm
 import traceback
 from DenseOpticalFlow import DenseOpticalFlow
-from models import OCRReader, FENN
+from models import OCRReader, FENN, FB_send
 from utils import *
 from Firebase import *
 import torch
 
 ##########--config params--#################################################################
-# "bot1": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:554",
-# "bot2": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:555",
-#"mid1": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:556",
-# "mid2": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:557",
-#"top": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:558"
-
-# "mid1": "/home/home/projects/neural_backend/data/backend_processor_tests/mid_test_main.mp4",
-# "top": "/home/home/projects/neural_backend/data/backend_processor_tests/top_test_main.mp4"
-
 cameras = {
 
     # "bot1": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:554",
@@ -69,14 +60,15 @@ do_save_results = True
 ############################################################################################
 
 ##########--initialization--################################################################
-ocr = OCRReader(type="rtsp")
+ocr = OCRReader(type="rtsp", gpu=False)
 op = DenseOpticalFlow(opt_param)
 
 model = FENN(input_shape=nn_cfg["input_shape"], classes=nn_cfg["classes"], deviceType=nn_cfg["device"])
 model.load_state_dict(torch.load(nn_cfg["pathToWeights"]))
 
-DC = DataComposer()
-DC.CreateCurrentShift()  # TODO необходимо создавать вначале смены + trainID
+firebase = FB_send()
+# DC = DataComposer()
+# DC.CreateCurrentShift()  # TODO необходимо создавать вначале смены + trainID
 ############################################################################################
 
 ##########--text decoration--###############################################################
@@ -84,8 +76,7 @@ fontFace = cv2.FONT_HERSHEY_SIMPLEX
 fontScale = 1
 color = (0, 255, 0)
 thickness = 2
-
-rr = cv2.namedWindow("result")
+#rr = cv2.namedWindow("result")
 wk = 0
 ############################################################################################
 if __name__ == "__main__":
@@ -161,7 +152,7 @@ if __name__ == "__main__":
                         counter += 1
                         all_info[counter] = {"top": {"frame": top_buf["frame"],
                                                      "time": top_buf["time"],
-                                                     "state": "top_buf['state']"},
+                                                     "state": top_buf["state"]},
                                              "mid": {"frame": ocr_handler["frame"],
                                                      "number": ocr_handler["number"]}}
 
@@ -181,17 +172,19 @@ if __name__ == "__main__":
                                     'imagePath': f"./data/results_of_backend/{top_buf['time']} - mid1.jpg"
                                 }]
                         }
-
-                        st = tm.time()
-                        DC.AddEvent(event["time"],
-                                    event["direction"],
-                                    event["number"],
-                                    event["trainID"],
-                                    event["state"],
-                                    event["event_frames"]
-                                    )
-                        print("firebase time", tm.time() - st)
-                        top_buf.clear()
+                        firebase.send_to_process(event)
+                        #####################################################################
+                        #st = tm.time()
+                        #DC.AddEvent(event["time"],
+                        #            event["direction"],
+                        #            event["number"],
+                        #            event["trainID"],
+                        #            event["state"],
+                        #            event["event_frames"]
+                        #            )
+                        #print("firebase time", tm.time() - st)
+                        #top_buf.clear()
+                        ###################################################################
 
             # if len(all_info) == 0:
             #     print("\r", "нет значений", end="")

@@ -1,3 +1,5 @@
+import multiprocessing
+import traceback
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -7,6 +9,7 @@ import time
 from torchsummary import summary
 from utils import warp_image, show_image, get_filelist
 import cv2
+from Firebase import *
 
 
 # NN for classification wagon status(Fill or Empty)
@@ -119,8 +122,8 @@ class MLP(nn.Module):
 class EasyOcr:
     """class with EasyOcr and sorting algorithm"""
 
-    def __init__(self):
-        self.model = Reader(["en"], gpu=True, verbose=False)
+    def __init__(self, gpu=False):
+        self.model = Reader(["en"], gpu=gpu, verbose=False)
         self.buff = {}
         self.ID = []
 
@@ -179,7 +182,7 @@ class EasyOcr:
 
 
 class OCRReader:
-    def __init__(self, src=None, type=None, format_directory="jpg", all_info=None):
+    def __init__(self, src=None, type=None, format_directory="jpg", all_info=None, gpu=False):
         """
         ---this class should be used for comfortable reading text-information from frames---
 
@@ -193,7 +196,7 @@ class OCRReader:
         self.all_info = all_info
         self.video = None
         self.empty_frames = 0   # global variable which shows how many frames passed without a number
-        self.model = EasyOcr()
+        self.model = EasyOcr(gpu=gpu)
         if type == "mp4":
             self.video = cv2.VideoCapture(src)
             print("video in ocr")
@@ -299,5 +302,30 @@ class OCRReader:
     def cleaner(self):
         self.empty_frames = 0
 
+class FB_send:
+    def __init__(self):
+        self.q = multiprocessing.Queue(maxsize=1)
+        self.DC = DataComposer()
+        self.DC.CreateCurrentShift()
+        self.proc = multiprocessing.Process(target=self.send_to_FB())
+        self.proc.start()
 
+    def send_to_process(self, event: dict):
+        #TODO check it
+        if self.q.empty():
+            self.q.put(event)
 
+    def send_to_FB(self):
+        while True:
+            try:
+                out = self.q.get()
+                if out is not None:
+                    self.DC.AddEvent(out["time"],
+                                     out["direction"],
+                                     out["number"],
+                                     out["trainID"],
+                                     out["state"],
+                                     out["event_frames"]
+                                    )
+            except:
+                print(traceback.format_exc())
