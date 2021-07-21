@@ -319,16 +319,16 @@ class FB_send:
         print(os.getpid())
         self.DC = DataComposer()
         self.DC.CreateCurrentShift()
-        while True:
-            try:
-                if not(self.q.empty()):
-                    out = self.q.get()
-                    self.DC.AddEvent(out["time"],
-                                     out["direction"],
-                                     out["number"],
-                                     out["trainID"],
-                                     out["state"],
-                                     out["event_frames"]
-                                    )
-            except:
-                print(traceback.format_exc())
+        try:
+            while True:
+                    if not(self.q.empty()):
+                        out = self.q.get()
+                        self.DC.AddEvent(out["time"],
+                                         out["direction"],
+                                         out["number"],
+                                         out["trainID"],
+                                         out["state"],
+                                         out["event_frames"]
+                                        )
+        except:
+            print(traceback.format_exc())
