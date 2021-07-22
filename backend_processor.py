@@ -121,7 +121,7 @@ if __name__ == "__main__":
                 if (now_time.tm_hour == 7 and now_time.tm_min == 30) or (now_time.tm_hour == 19 and now_time.tm_min == 30):
                     train_id = 0
                 # TODO nn here --------------------------------------------------------
-                predict2 = model1.predict(moment_frames["mid1"]["frame"])
+                predict2 = model2.predict(moment_frames["mid1"]["frame"])
                 predict_class_2, predict_prob_2 = predict2["className"], predict2["accuracy"],
                 if predict_class_2 != 'Train':
                     train_here = False
