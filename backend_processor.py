@@ -95,6 +95,8 @@ if __name__ == "__main__":
         tm.sleep(2)
         top_buf = {}
         train_here = False
+        train_id = 0
+        counter_tumb = False
 
         while True:
             moment_frames = {}
@@ -114,13 +116,21 @@ if __name__ == "__main__":
             if "mid1" and "top" not in moment_frames:
                 continue
             else:
+                now_time = tm.localtime()
+                # TODO train id -------------------------------------------------------
+                if (now_time.tm_hour == 7 and now_time.tm_min == 30) or (now_time.tm_hour == 19 and now_time.tm_min == 30):
+                    train_id = 0
                 # TODO nn here --------------------------------------------------------
                 predict2 = model1.predict(moment_frames["mid1"]["frame"])
                 predict_class_2, predict_prob_2 = predict2["className"], predict2["accuracy"],
                 if predict_class_2 != 'Train':
                     train_here = False
+                    counter_tumb = False
                     continue
                 train_here = True
+                if counter_tumb == False:
+                    train_id += 1
+                    counter_tumb = True
                 # TODO-----------------------------------------------------------------
                 cut_frame_mid1 = warp_image(moment_frames["mid1"]["frame"], np.array(eval(str(cut_cord_mid1)), dtype="float32"))
 
@@ -162,7 +172,7 @@ if __name__ == "__main__":
                             "time": top_buf["time"],
                             "direction": "arrive" if top_buf["direction"] == "left" else "departure",
                             "number": text,
-                            "trainID": 1,
+                            "trainID": train_id,
                             "state": top_buf["state"],
                             "event_frames": [
                                 {
