@@ -130,9 +130,10 @@ class EasyOcr:
 
     def predict(self, image, minsize):
         """
-        minsize - minimum numbers of the answer that would be used in the final choosing
-
-        return info - dict with keys (bbox - bounding box, prob - prediction, number - text, frame - picture)
+function give information from the frame and sort it
+        @param image: frame
+        @param minsize: int - minimum numbers of the answer that would be used in the final choosing
+        @return: dict - with keys (bbox - bounding box, prob - prediction, number - text, frame - picture)
         """
         results = self.model.readtext(
             image,
@@ -164,11 +165,17 @@ class EasyOcr:
         return ans
 
     def saver(self, ans):
+        """
+function for saving frame with info (answer) into the EasyOcr buffer
+        @param ans:
+        """
         self.buff[ans["prob"]] = ans
         self.ID.append(ans["prob"])
-        # print(self.ID)
 
     def choose(self):
+        """
+        @return: dict - with better information from the buffer
+        """
         if self.ID:
             self.ID.sort()
             id = self.ID[-1]
@@ -178,6 +185,9 @@ class EasyOcr:
             return ans
 
     def cleaner(self):
+        """
+function for cleaning buffer
+        """
         self.buff.clear()
         self.ID.clear()
 
@@ -186,10 +196,9 @@ class OCRReader:
     def __init__(self, src=None, type=None, format_directory="jpg", all_info=None, gpu=False):
         """
         ---this class should be used for comfortable reading text-information from frames---
-
         > There are three types ["mp4" or "rtsp", "img", "dir"] - video, image, directory.
         (format_directory - it is name-type of all images in the directory)
-
+        > gpu - using gpu or not
         > all_info - dict, list, tuple or something else (structure where would be saved all info)
         """
         self.type = type
@@ -213,6 +222,7 @@ class OCRReader:
     def video_run(self, max_wait_iterations=20, cut_box=[(196, 400), (1235, 400), (1235, 1041), (196, 1041)],
                   watch=True):
         """
+        debug function
         > max_wait_iterations - delay after choosing final info for saving
         > watch - (True or False) watching video
         > cut_box - coordinates in pixels for cutting frame [(top_left), (top_right), (bot_right), (bot_left)] (x, y)
@@ -236,6 +246,7 @@ class OCRReader:
 
     def images_run(self, cut_box=[(196, 400), (1235, 400), (1235, 1041), (196, 1041)], watch=True):
         """
+        debug function
         > watch - (True or False) watching images from directory
         > cut_box - coordinates in pixels for cutting frame [(top_left), (top_right), (bot_right), (bot_left)] (x, y)
         """
@@ -262,10 +273,10 @@ class OCRReader:
 
     def main_ocr_run(self, local_src, max_wait_iterations=20):
         """
-        > independent function
-        > should be used in Data Processor
-        if the number has not appeared yet returns None
-        if the number has appeared
+function for analyzing information from frames and making better choice between same frames of one wagon
+        @param local_src: frame
+        @param max_wait_iterations: int - how many frames should be empty before making choosing better frame and number
+        @return: dict
         """
         results = self.model.predict(local_src, 7)  # , draw_bbox
         print(len(results))
@@ -275,7 +286,6 @@ class OCRReader:
                 return results
         if len(results):
             self.model.saver(results)
-            # cv2.imwrite(f"./data/results_of_backend/{time.ctime()} - mid1.jpg", local_src)
             self.show_bbox(local_src, results)
             self.empty_frames = 0
             return {"flag": "writing in the buffer now"}
@@ -284,11 +294,15 @@ class OCRReader:
             if pif_paf:
                 self.empty_frames = 0
                 return pif_paf
-                # print(self.empty_frames)
         else:
             return results
 
     def show_bbox(self, img, results):
+        """
+function for drawing bbox and text on the frame (can be used only inside this class)
+        @param img: frame
+        @param results: dict
+        """
         tl = results["bbox"][1]
         br = results["bbox"][2]
         text = results["number"]
@@ -305,17 +319,25 @@ class OCRReader:
 
 
 class FB_send:
+    """class for creating collateral process for sending info into the Firebase"""
     def __init__(self):
         self.q = multiprocessing.Queue(maxsize=1)
         self.proc = multiprocessing.Process(target=self.send_to_FB)
         self.proc.start()
 
     def send_to_process(self, event: dict):
+        """
+function add information in queue, which is linked main process with collateral process
+        @param event: dict with information
+        """
         #TODO check it
         if self.q.empty():
             self.q.put(event)
 
     def send_to_FB(self):
+        """
+function for cycle reading from the queue and sending information in FireBase (with help Firebase module)
+        """
         print(os.getpid())
         self.DC = DataComposer()
         self.DC.CreateCurrentShift()

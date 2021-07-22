@@ -69,7 +69,7 @@ model.load_state_dict(torch.load(nn_cfg["pathToWeights"]))
 print(os.getpid())
 firebase = FB_send()
 print(2)
-# DC = DataComposer()
+# DC = DataComposer()      #TODO 
 # DC.CreateCurrentShift()  # TODO необходимо создавать вначале смены + trainID
 ############################################################################################
 
