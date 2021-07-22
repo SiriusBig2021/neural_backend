@@ -69,8 +69,9 @@ model.load_state_dict(torch.load(nn_cfg["pathToWeights"]))
 print(os.getpid())
 firebase = FB_send()
 print(2)
-# DC = DataComposer()      #TODO 
-# DC.CreateCurrentShift()  # TODO необходимо создавать вначале смены + trainID
+#TODO --------------------------------------------
+#TODO необходимо создавать вначале смены + trainID
+#TODO --------------------------------------------
 ############################################################################################
 
 ##########--text decoration--###############################################################
@@ -155,7 +156,7 @@ if __name__ == "__main__":
                             "time": top_buf["time"],
                             "direction": "arrive" if top_buf["direction"] == "left" else "departure",
                             "number": text,
-                            "trainID": 4,
+                            "trainID": 1,
                             "state": top_buf["state"],
                             "event_frames": [
                                 {
@@ -168,19 +169,6 @@ if __name__ == "__main__":
                                 }]
                         }
                         firebase.send_to_process(event)
-                        #####################################################################
-                        #st = tm.time()
-                        #DC.AddEvent(event["time"],
-                        #            event["direction"],
-                        #            event["number"],
-                        #            event["trainID"],
-                        #            event["state"],
-                        #            event["event_frames"]
-                        #            )
-                        #print("firebase time", tm.time() - st)
-                        #top_buf.clear()
-                        ###################################################################
-
             # if len(all_info) == 0:
             #     print("\r", "нет значений", end="")
             # else:
