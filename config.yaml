@@ -1,0 +1,71 @@
+cameras:
+    mid1: rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:556
+    top: rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:558
+
+OpticalFlow:
+    threshold_magnitude: 9
+    size_accumulation: 6
+    opticflow_param:
+        pyr_scale: 0.5
+        levels: 3
+        winsize: 100
+        iterations: 4
+        poly_n: 5
+        poly_sigma: 1.1
+        flags: cv2.OPTFLOW_LK_GET_MIN_EIGENVALS
+
+Fenn_full_empty:
+    device: cpu
+    input_shape:
+        - 3
+        - 128
+        - 128
+    classes:
+        - empty
+        - fill
+    pathToWeights:
+        - ./weight/fill_classifier.pt
+
+Fenn_train:
+    device: cpu
+    input_shape:
+        - 3
+        - 128
+        - 128
+    classes:
+        - None
+        - Train
+    pathToWeights:
+        - ./weight/TrainOrNone.pt
+Osr:
+    src: "file"
+    gpu: False
+    type: "rtsp"
+
+Cut_cord:
+    -
+        - 0
+        - 249
+    -
+        - 1296
+        - 249
+    -
+        - 1296
+        - 1065
+    -
+        - 0
+        - 1065
+
+Image:
+    image_show: False
+    saving_results: True
+    flag_4img: 0
+    dir_for_save: ./data/results_of_backend/
+    fontFace: cv2.FONT_HERSHEY_SIMPLEX
+    fontScale: 1
+    color:
+        - 0
+        - 255
+        - 0
+    thickness: 2
+

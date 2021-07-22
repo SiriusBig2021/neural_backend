@@ -11,6 +11,7 @@ from utils import warp_image, show_image, get_filelist
 import cv2
 from Firebase import *
 import os
+import yaml
 
 
 # NN for classification wagon status(Fill or Empty)
@@ -338,7 +339,6 @@ function add information in queue, which is linked main process with collateral 
         """
 function for cycle reading from the queue and sending information in FireBase (with help Firebase module)
         """
-        print(os.getpid())
         self.DC = DataComposer()
         self.DC.CreateCurrentShift()
         try:
@@ -352,5 +352,51 @@ function for cycle reading from the queue and sending information in FireBase (w
                                          out["state"],
                                          out["event_frames"]
                                         )
+                        #print('info has been sanded')
         except:
             print(traceback.format_exc())
+
+
+class Config:
+    def __init__(self, path: str):
+        with open(eval(f'r"{path}"')) as file:
+            self.cfg = yaml.load(file, Loader=yaml.FullLoader)
+        #############-Cameras-###########################
+        self.mid1 = self.cfg['cameras']['mid1']
+        self.top = self.cfg['cameras']['top']
+        #############-OpticalFlow-#######################
+        self.optical_params = self.cfg['OpticalFlow']
+        #############-Fenn_full_empty-##############################
+        self.fenn_dev_fe = self.cfg['Fenn_full_empty']['device']
+        self.input_shp_fe = self.cfg['Fenn_full_empty']['input_shape']
+        self.classes_fe = self.cfg['Fenn_full_empty']['classes']
+        self.pathToWeights_fe = self.cfg['Fenn_full_empty']['pathToWeights']
+        #############-Fenn_train-##############################
+        self.fenn_dev_tr = self.cfg['Fenn_train']['device']
+        self.input_shp_tr = self.cfg['Fenn_train']['input_shape']
+        self.classes_tr = self.cfg['Fenn_train']['classes']
+        self.pathWeights_tr = self.cfg['Fenn_train']['pathToWeights']
+        #############-Osr_train-##############################
+        self.src_ocr = self.cfg['Osr']['src']
+        self.gpu_osr = self.cfg['Osr']['gpu']
+        self.type_ocr = self.cfg['Osr']['type']
+        #############-All-####################################
+        self.cut_cord = self.cfg['Cut_cord']
+        #############-Image-##################################
+        self.image_show = self.cfg['Image']['image_show']
+        self.saving_results = self.cfg['Image']['saving_results']
+        self.flag_4img = self.cfg['Image']['flag_4img']
+        self.dir_for_save = self.cfg['Image']['dir_for_save']
+        self.fontFace = self.cfg['Image']['fontFace']
+        self.fontScale = self.cfg['Image']['fontScale']
+        self.color = self.cfg['Image']['color']
+        self.thickness = self.cfg['Image']['thickness']
+        #####################################################
+
+    def cfg_save(self, mid1=None, top=None, optical_params=None, fenn_dev_fe=None, input_shp_fe=None,
+                 classes_fe=None, pathToWeights_fe=None, fenn_dev_tr=None, input_shp_tr=None, classes_tr=None,
+                 pathToWeights_tr=None, src_ocr=None, gpu_osr=None, type_ocr=None, cut_cord=None, image_show=None,
+                 saving_results=None, flag_4img=None, dir_for_save=None, fontFace=None, fontScale=None, color=None,
+                 thickness=None):
+        pass
+
