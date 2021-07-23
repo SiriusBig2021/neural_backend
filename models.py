@@ -364,24 +364,21 @@ class Config:
         #############-Cameras-###########################
         self.mid1 = self.cfg['cameras']['mid1']
         self.top = self.cfg['cameras']['top']
+        self.cameras = self.cfg['cameras']
         #############-OpticalFlow-#######################
         self.optical_params = self.cfg['OpticalFlow']
+        self.cfg['OpticalFlow']['opticflow_param']['flags'] = eval(self.cfg['OpticalFlow']['opticflow_param']['flags'])
         #############-Fenn_full_empty-##############################
-        self.fenn_dev_fe = self.cfg['Fenn_full_empty']['device']
-        self.input_shp_fe = self.cfg['Fenn_full_empty']['input_shape']
-        self.classes_fe = self.cfg['Fenn_full_empty']['classes']
-        self.pathToWeights_fe = self.cfg['Fenn_full_empty']['pathToWeights']
+        self.fenn_all_fe = self.cfg['Fenn_full_empty']
         #############-Fenn_train-##############################
-        self.fenn_dev_tr = self.cfg['Fenn_train']['device']
-        self.input_shp_tr = self.cfg['Fenn_train']['input_shape']
-        self.classes_tr = self.cfg['Fenn_train']['classes']
-        self.pathWeights_tr = self.cfg['Fenn_train']['pathToWeights']
+        self.fenn_all_tr = self.cfg['Fenn_train']
         #############-Osr_train-##############################
-        self.src_ocr = self.cfg['Osr']['src']
         self.gpu_osr = self.cfg['Osr']['gpu']
         self.type_ocr = self.cfg['Osr']['type']
         #############-All-####################################
+        self.src = self.cfg['Source']
         self.cut_cord = self.cfg['Cut_cord']
+        self.max_wait_iteration = self.cfg['Max_wait_iteration']
         #############-Image-##################################
         self.image_show = self.cfg['Image']['image_show']
         self.saving_results = self.cfg['Image']['saving_results']

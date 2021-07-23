@@ -1,10 +1,11 @@
 import time as tm
 from DenseOpticalFlow import DenseOpticalFlow
-from models import OCRReader, FENN, FB_send
+from models import OCRReader, FENN, FB_send, Config
 from utils import *
 import torch
 
 ##########--config params--#################################################################
+"""
 cameras = {
 
     # "bot1": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:554",
@@ -71,7 +72,28 @@ fontFace = cv2.FONT_HERSHEY_SIMPLEX
 fontScale = 1
 color = (0, 255, 0)
 thickness = 2
+"""
 ############################################################################################
+# """
+cfg = Config('config.yaml')
+cameras = cfg.cameras
+opt_param = cfg.optical_params
+NN_full_empty_cfg = cfg.fenn_all_fe
+NN_train_cfg = cfg.fenn_all_tr
+ocr_type = cfg.type_ocr
+ocr_gpu = cfg.gpu_osr
+source = cfg.src
+max_wait_iteration = cfg.max_wait_iteration
+cut_cord_mid1 = cfg.cut_cord
+do_imshow = cfg.image_show
+do_save_results = cfg.saving_results
+dir_for_save = cfg.dir_for_save
+flag_4img = cfg.flag_4img
+fontFace = cfg.fontFace
+fontScale = cfg.fontScale
+color = cfg.color
+thickness = cfg.thickness
+# """
 ############################################################################################
 ##########--initialization--################################################################
 ocr = OCRReader(type=ocr_type, gpu=ocr_gpu)
@@ -133,7 +155,7 @@ if __name__ == "__main__":
                     counter_tumb = True
                 # TODO-----------------------------------------------------------------
                 cut_frame_mid1 = warp_image(moment_frames["mid1"]["frame"], np.array(eval(str(cut_cord_mid1)), dtype="float32"))
-
+                #show_image(cut_frame_mid1, "333", delay=0) #TODO--------------
                 first_t = tm.time()
                 movement_direct = op.getMoveDirection(cut_frame_mid1)
                 second_t = tm.time()

@@ -1,6 +1,6 @@
 cameras:
-    mid1: rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:556
-    top: rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:558
+    mid1: ./data/backend_processor_tests/mid_test_main.mp4
+    top: ./data/backend_processor_tests/top_test_main.mp4
 
 OpticalFlow:
     threshold_magnitude: 9
@@ -23,8 +23,7 @@ Fenn_full_empty:
     classes:
         - empty
         - fill
-    pathToWeights:
-        - ./weight/fill_classifier.pt
+    pathToWeights: ./weight/fill_classifier.pt
 
 Fenn_train:
     device: cpu
@@ -35,10 +34,10 @@ Fenn_train:
     classes:
         - None
         - Train
-    pathToWeights:
-        - ./weight/TrainOrNone.pt
+    pathToWeights: ./weight/TrainOrNone.pt
+
+Source: file
 Osr:
-    src: "file"
     gpu: False
     type: "rtsp"
 
@@ -55,6 +54,8 @@ Cut_cord:
     -
         - 0
         - 1065
+
+Max_wait_iteration: 4
 
 Image:
     image_show: False
