@@ -384,6 +384,7 @@ class Config:
         self.saving_results = self.cfg['Image']['saving_results']
         self.flag_4img = self.cfg['Image']['flag_4img']
         self.dir_for_save = self.cfg['Image']['dir_for_save']
+        self.cfg['Image']['fontFace'] = eval(self.cfg['Image']['fontFace'])
         self.fontFace = self.cfg['Image']['fontFace']
         self.fontScale = self.cfg['Image']['fontScale']
         self.color = self.cfg['Image']['color']
