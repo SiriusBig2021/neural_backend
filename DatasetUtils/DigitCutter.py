@@ -11,10 +11,11 @@ from google.cloud import vision
 
 # imgs = utils.get_filelist("./data/ocr_test", ["jpg", "png"])
 
-save_dir = "/home/sauce-chili/Sirius/neural_backend/data/ocr_dataset"
+save_dir = "/home/sauce-chili/Sirius/neural_backend/data/ocr-dataset-v2"
 do_save = True
-pathToVideo = '/home/sauce-chili/Sirius/neural_backend/data/VideoWithMove/mid_1/mid1_11-07-2021_06:19:41_15-07-2021-11:37.mp4'
-pathToImg = '/home/sauce-chili/Sirius/neural_backend/data/Img/frame_for_warp.png'
+pathToVideo ='/home/sauce-chili/Sirius/neural_backend/data/VideoWithMove/mid_1/mid1_14-07-2021_19:37:41_24-07-2021-18:03.mp4'
+
+# pathToImg = '/home/sauce-chili/Sirius/neural_backend/data/Img/frame_for_warp.png'
 
 cap = cv2.VideoCapture(pathToVideo)
 client = vision.ImageAnnotatorClient()
@@ -135,6 +136,13 @@ while True:
                          "9": 0.12}
             prev_c = bbox[0]
             for n, i in enumerate(number["name"]):
+
+                try:
+                    int(i)
+                except ValueError as e:
+                    print('Val err:',e)
+                    continue
+
                 number_bbox = [prev_c, bbox[1], int(prev_c + bbox_w * numbers_w[i]), bbox[3]]
                 # print("prev_c:", prev_c, "bbox:",number_bbox)
 

@@ -181,8 +181,7 @@ class VideoCutter:
 #inp = '/home/sauce-chili/Sirius/neural_backend/data/archive/mid1/'
 outp = '/home/sauce-chili/Sirius/neural_backend/data/VideoWithMove/mid_1/'
 
-pathToVideo = '/home/sauce-chili/Sirius/neural_backend/data/archive/mid1/mid1_12-07-2021_22:42:40.mp4'
-
+pathToVideo = '/home/sauce-chili/Sirius/neural_backend/data/archive/mid1/mid1_14-07-2021_19:37:41.mp4dddddd'
 # next
 # /home/sauce-chili/Sirius/neural_backend/data/archive/mid1/mid1_13-07-2021_11:31:02.mp4
 
