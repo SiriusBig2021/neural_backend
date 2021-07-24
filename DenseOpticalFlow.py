@@ -29,7 +29,7 @@ class DenseOpticalFlow:
 
     # желательно подавать обрезанную картинку
 
-    def clearHash(self):
+    def clearСash(self):
         self.directions_map.fill(0)
         self.frame_previous = None
         self.gray_previous = None
