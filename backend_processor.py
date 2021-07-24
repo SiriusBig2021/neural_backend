@@ -5,74 +5,6 @@ from utils import *
 import torch
 
 ##########--config params--#################################################################
-"""
-cameras = {
-
-    # "bot1": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:554",
-    # "bot2": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:555",
-    # "mid1": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:556",
-    # "mid2": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:557",
-    # "top": "rtsp://user:bDC8BzQeFp8jb0C@217.195.100.69:558"
-
-    "mid1": "./data/backend_processor_tests/mid_test_main.mp4",
-    "top": "./data/backend_processor_tests/top_test_main.mp4"
-
-    # "mid1": "/home/ea/projects/SIRIUS21/data/backend_processor_tests/cutVideo.mp4",
-    # "top": "/home/ea/projects/SIRIUS21/data/backend_processor_tests/cutVideo1.mp4"
-
-    # "mid1": "/home/ea/projects/SIRIUS21/data/backend_processor_tests/cutVideo2.mp4",
-    # "top": "/home/ea/projects/SIRIUS21/data/backend_processor_tests/cutVideo3.mp4"
-
-    # "mid1": "/home/ea/projects/SIRIUS21/data/backend_processor_tests/cutVideo4.mp4",
-    # "top": "/home/ea/projects/SIRIUS21/data/backend_processor_tests/cutVideo5.mp4"
-
-}
-
-opt_param = {
-    'threshold_magnitude': 9,
-    'size_accumulation': 6,
-    'opticflow_param': {
-        'pyr_scale': 0.5,
-        'levels': 3,
-        'winsize': 100,
-        'iterations': 4,
-        'poly_n': 5,
-        'poly_sigma': 1.1,
-        'flags': cv2.OPTFLOW_LK_GET_MIN_EIGENVALS
-    }
-}
-
-NN_full_empty_cfg = {
-
-    "device": "cpu",  # "cpu" or "cuda:0" for gpu
-    "input_shape": (3, 128, 128),  # ch, h, w
-    "classes": ['empty', 'fill'],
-    "pathToWeights": "./weight/fill_classifier.pt"
-
-}
-
-NN_train_cfg = {
-    "device": "cpu",  # "cpu" or "cuda:0" for gpu
-    "input_shape": (3, 128, 128),  # ch, h, w
-    "classes": ['None', 'Train'],
-    "pathToWeights": "./weight/TrainOrNone.pt"
-}
-
-ocr_type = "rtsp"
-ocr_gpu = False
-source = "file"
-max_wait_iteration = 4
-cut_cord_mid1 = [(0, 249), (1296, 249), (1296, 1065), (0, 1065)]
-do_imshow = False
-do_save_results = True
-dir_for_save = './data/results_of_backend/'
-flag_4img = 0
-##########--text decoration--###############################################################
-fontFace = cv2.FONT_HERSHEY_SIMPLEX
-fontScale = 1
-color = (0, 255, 0)
-thickness = 2
-"""
 ############################################################################################
 # """
 cfg = Config('config.yaml')
@@ -81,7 +13,7 @@ opt_param = cfg.optical_params
 NN_full_empty_cfg = cfg.fenn_all_fe
 NN_train_cfg = cfg.fenn_all_tr
 ocr_type = cfg.type_ocr
-ocr_gpu = cfg.gpu_osr
+ocr_gpu = cfg.gpu_ocr
 source = cfg.src
 max_wait_iteration = cfg.max_wait_iteration
 cut_cord_mid1 = cfg.cut_cord
@@ -155,7 +87,6 @@ if __name__ == "__main__":
                     counter_tumb = True
                 # TODO-----------------------------------------------------------------
                 cut_frame_mid1 = warp_image(moment_frames["mid1"]["frame"], np.array(eval(str(cut_cord_mid1)), dtype="float32"))
-                #show_image(cut_frame_mid1, "333", delay=0) #TODO--------------
                 first_t = tm.time()
                 movement_direct = op.getMoveDirection(cut_frame_mid1)
                 second_t = tm.time()

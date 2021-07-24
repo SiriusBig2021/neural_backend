@@ -125,7 +125,9 @@ class EasyOcr:
     """class with EasyOcr and sorting algorithm"""
 
     def __init__(self, gpu=False):
+        # TODO (вставка new осr)
         self.model = Reader(["en"], gpu=gpu, verbose=False)
+        # TODO ------------------
         self.buff = {}
         self.ID = []
 
@@ -136,11 +138,13 @@ function give information from the frame and sort it
         @param minsize: int - minimum numbers of the answer that would be used in the final choosing
         @return: dict - with keys (bbox - bounding box, prob - prediction, number - text, frame - picture)
         """
+        # TODO (вставка new осr)
         results = self.model.readtext(
             image,
             contrast_ths=10,
             low_text=0.15,
         )
+        # TODO ------------------
         all_items = {}
         clefs = []
         ans = {}
@@ -207,7 +211,9 @@ class OCRReader:
         self.all_info = all_info
         self.video = None
         self.empty_frames = 0   # global variable which shows how many frames passed without a number
+        #TODO (вставка new осr)
         self.model = EasyOcr(gpu=gpu)
+        #TODO ---------------
         if type == "mp4":
             self.video = cv2.VideoCapture(src)
             print("video in ocr")
@@ -279,8 +285,9 @@ function for analyzing information from frames and making better choice between 
         @param max_wait_iterations: int - how many frames should be empty before making choosing better frame and number
         @return: dict
         """
+        # TODO (вставка new осr)
         results = self.model.predict(local_src, 7)  # , draw_bbox
-        print(len(results))
+        # TODO ---------------
         if len(results) == 0 and len(self.model.buff) > 0:
             if self.empty_frames != max_wait_iterations:
                 self.empty_frames += 1
@@ -373,8 +380,8 @@ class Config:
         #############-Fenn_train-##############################
         self.fenn_all_tr = self.cfg['Fenn_train']
         #############-Osr_train-##############################
-        self.gpu_osr = self.cfg['Osr']['gpu']
-        self.type_ocr = self.cfg['Osr']['type']
+        self.gpu_ocr = self.cfg['Ocr']['gpu']
+        self.type_ocr = self.cfg['Ocr']['type']
         #############-All-####################################
         self.src = self.cfg['Source']
         self.cut_cord = self.cfg['Cut_cord']

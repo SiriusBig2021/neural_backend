@@ -36,12 +36,12 @@ Fenn_train:
         - Train
     pathToWeights: ./weight/TrainOrNone.pt
 
-Source: file
-Osr:
+Source: file    # webcam , rtsp_stream, file, directory
+Ocr:
     gpu: False
-    type: "rtsp"
+    type: rtsp  # only rtsp
 
-Cut_cord:
+Cut_cord:  #
     -
         - 0
         - 249
