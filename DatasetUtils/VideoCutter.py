@@ -6,11 +6,28 @@ import os
 
 from datetime import datetime
 
+opt_param = {
+    # Не лезь если ты не Женя
+    'threshold_magnitude': 6,  # пороговая амплитуда движения
+    'size_accumulation': 6,  # кол-во накапливаемых изображения
+    # Не лезть
+    'opticflow_param': {
+        'pyr_scale': 0.5,
+        'levels': 3,
+        'winsize': 100,
+        'iterations': 4,
+        'poly_n': 5,
+        'poly_sigma': 1.1,
+        'flags': cv2.OPTFLOW_LK_GET_MIN_EIGENVALS
+    }
+}
+
 
 class VideoCutter:
     __amountJumpByFrameLine = 30
+    __amountJumpMaxByFrameLine = 600
 
-    def __init__(self, outputPath, opt_param: dict, useTools: bool = False, inputPath=None):
+    def __init__(self, outputPath, opt_param: dict, useTools: bool = True, inputPath=None):
 
         if inputPath is None:
             self.handlerFolder = []
@@ -30,19 +47,18 @@ class VideoCutter:
         self.videoWriter = None
 
     def __initVideoWriter(self, nameVideoFile, fourcc, fps, size):
-
         self.videoWriter = cv2.VideoWriter(nameVideoFile, fourcc, fps, size)
 
-    def __initVideoWriter(self, camReader, size, currentVideoPath):
-        file = currentVideoPath.split('/')[-1]
-        fileName = file.split('.')[0]
-        fileSuffix = file.split('.')[1]
-        name = fileName + '_' \
-               + datetime.now().strftime("%d-%m-%Y-%H:%M") \
-               + '.' + fileSuffix
-        fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-        fps = camReader.get(cv2.CAP_PROP_FPS)
-        self.videoWriter = cv2.VideoWriter(self.outPath + name, fourcc, fps, size)
+    # def __initVideoWriter(self, camReader, size, currentVideoPath):
+    #     file = currentVideoPath.split('/')[-1]
+    #     fileName = file.split('.')[0]
+    #     fileSuffix = file.split('.')[1]
+    #     name = fileName + '_' \
+    #            + datetime.now().strftime("%d-%m-%Y-%H:%M") \
+    #            + '.' + fileSuffix
+    #     fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+    #     fps = camReader.get(cv2.CAP_PROP_FPS)
+    #     self.videoWriter = cv2.VideoWriter(self.outPath + name, fourcc, fps, size)
 
     def __destroyVideoWriter(self):
         self.videoWriter.release()
@@ -71,14 +87,14 @@ class VideoCutter:
                 key = cv2.waitKey(33)
 
                 # skip video
-                if key == ord('s') and self.useTools:
+                if self.useTools and key == ord('n'):
                     print('[INFO] skipping video')
                     break
 
                 # roll video on amountJumpByFrameLine
-                elif key == ord('e') and self.useTools:
+                elif self.useTools and key == ord('e'):
 
-                    self.optflow.clearHash()
+                    self.optflow.clearСash()
                     if indFrame + self.__amountJumpByFrameLine >= nbFrames - 1:
                         indFrame = nbFrames - 1
                     else:
@@ -87,11 +103,29 @@ class VideoCutter:
                 # roll back video on amountJumpByFrameLine
                 elif key == ord('q') and self.useTools:
 
-                    self.optflow.clearHash()
+                    self.optflow.clearСash()
                     if indFrame - self.__amountJumpByFrameLine <= 0:
                         indFrame = 0
                     else:
                         indFrame -= self.__amountJumpByFrameLine
+
+                # roll video on amountJumpMaxByFrameLine
+                elif key == ord('d') and self.useTools:
+
+                    self.optflow.clearСash()
+                    if indFrame + self.__amountJumpMaxByFrameLine >= nbFrames - 1:
+                        indFrame = nbFrames - 1
+                    else:
+                        indFrame += self.__amountJumpMaxByFrameLine
+
+                # roll back video on amountJumpMaxByFrameLine
+                elif key == ord('a') and self.useTools:
+
+                    self.optflow.clearСash()
+                    if indFrame - self.__amountJumpMaxByFrameLine <= 0:
+                        indFrame = 0
+                    else:
+                        indFrame -= self.__amountJumpMaxByFrameLine
 
                 ####################################################################
 
@@ -102,7 +136,7 @@ class VideoCutter:
                 grabbed, frame = cam.read()
 
                 if not grabbed:
-                    print('[INFO] Failed to capture video')
+                    print('[INFO] Failed to capture frame')
                     break
 
                 direction = self.optflow.getMoveDirection(frame[140:, :])
@@ -115,22 +149,22 @@ class VideoCutter:
 
                 if direction != 'wait':
 
-                    if self.videoWriter is None:
-                        self.__initVideoWriter(camReader=cam,
-                                               size=frame[:2][::-1],
-                                               currentVideoPath=videoPath)
-
                     # if self.videoWriter is None:
-                    #     file = videoPath.split('/')[-1]
-                    #     fileName = file.split('.')[0]
-                    #     fileSuffix = file.split('.')[1]
-                    #     name = fileName + '_' \
-                    #            + datetime.now().strftime("%d-%m-%Y-%H:%M") \
-                    #            + '.' + fileSuffix
-                    #     fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-                    #     fps = cam.get(cv2.CAP_PROP_FPS)
-                    #     size = frame.shape[:2][::-1]
-                    #     self.__initVideoWriter(self.outPath + name, fourcc, fps, size)
+                    #     self.__initVideoWriter(camReader=cam,
+                    #                            size=frame[:2][::-1],
+                    #                            currentVideoPath=videoPath)
+
+                    if self.videoWriter is None:
+                        file = videoPath.split('/')[-1]
+                        fileName = file.split('.')[0]
+                        fileSuffix = file.split('.')[1]
+                        name = fileName + '_' \
+                               + datetime.now().strftime("%d-%m-%Y-%H:%M") \
+                               + '.' + fileSuffix
+                        fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+                        fps = cam.get(cv2.CAP_PROP_FPS)
+                        size = frame.shape[:2][::-1]
+                        self.__initVideoWriter(self.outPath + name, fourcc, fps, size)
 
                     self.videoWriter.write(frame)
 
@@ -144,3 +178,14 @@ class VideoCutter:
             cv2.destroyWindow(videoPath)
 
 
+#inp = '/home/sauce-chili/Sirius/neural_backend/data/archive/mid1/'
+outp = '/home/sauce-chili/Sirius/neural_backend/data/VideoWithMove/mid_1/'
+
+pathToVideo = '/home/sauce-chili/Sirius/neural_backend/data/archive/mid1/mid1_12-07-2021_22:42:40.mp4'
+
+# next
+# /home/sauce-chili/Sirius/neural_backend/data/archive/mid1/mid1_13-07-2021_11:31:02.mp4
+
+vc = VideoCutter(outputPath=outp, opt_param=opt_param)
+vc.addVideoInHandlerFolder(pathToVideo)
+vc.execute()
