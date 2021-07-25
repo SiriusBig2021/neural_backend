@@ -386,6 +386,7 @@ class Config:
         self.src = self.cfg['Source']
         self.cut_cord = self.cfg['Cut_cord']
         self.max_wait_iteration = self.cfg['Max_wait_iteration']
+        self.time_zone = self.cfg['Time_zone']
         #############-Image-##################################
         self.image_show = self.cfg['Image']['image_show']
         self.saving_results = self.cfg['Image']['saving_results']
@@ -406,7 +407,7 @@ class Config:
         pass
 
 
-def local_time(tm=3):
+def time_zone(tm=3):
     time = get_format_date(date_format="%Y-%m-%dT%H:%M:%S")
     hours = int(time[11:13]) + tm
     if hours >= 24:

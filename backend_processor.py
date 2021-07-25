@@ -25,6 +25,7 @@ fontFace = cfg.fontFace
 fontScale = cfg.fontScale
 color = cfg.color
 thickness = cfg.thickness
+plus_tm = cfg.time_zone
 # """
 ############################################################################################
 ##########--initialization--################################################################
@@ -99,7 +100,7 @@ if __name__ == "__main__":
                     if ("flag" in ocr_handler) and (len(top_buf) == 0):
                         moment_frames["top"]["direction"] = movement_direct
                         top_buf = moment_frames["top"]
-                        top_buf["time"] = time_zone(tm=3)
+                        top_buf["time"] = time_zone(tm=plus_tm)
 
                         print("time from the top", top_buf["time"])
                         print("wagon with number, and it goes to the buffer")

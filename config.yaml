@@ -1,5 +1,5 @@
 cameras:
-    mid1: ./data/backend_processor_tests/mid_test_main.mp4
+    mid1: ./data/backend_processor_tests/train_checko.mp4
     top: ./data/backend_processor_tests/top_test_main.mp4
 
 OpticalFlow:
@@ -70,3 +70,4 @@ Image:
         - 0
     thickness: 2
 
+Time_zone: 3
