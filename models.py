@@ -7,7 +7,7 @@ from easyocr import Reader
 import numpy as np
 import time
 from torchsummary import summary
-from utils import warp_image, show_image, get_filelist
+from utils import warp_image, show_image, get_filelist, get_format_date
 import cv2
 from Firebase import *
 import os
@@ -405,3 +405,10 @@ class Config:
                  thickness=None):
         pass
 
+
+def local_time(tm=3):
+    time = get_format_date(date_format="%Y-%m-%dT%H:%M:%S")
+    hours = int(time[11:13]) + tm
+    if hours >= 24:
+        hours -= 24
+    return time.replace(time[11:14], f'{hours}:', 1)

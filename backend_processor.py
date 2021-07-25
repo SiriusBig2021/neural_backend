@@ -1,6 +1,6 @@
 import time as tm
 from DenseOpticalFlow import DenseOpticalFlow
-from models import OCRReader, FENN, FB_send, Config
+from models import OCRReader, FENN, FB_send, Config, time_zone
 from utils import *
 import torch
 
@@ -99,7 +99,7 @@ if __name__ == "__main__":
                     if ("flag" in ocr_handler) and (len(top_buf) == 0):
                         moment_frames["top"]["direction"] = movement_direct
                         top_buf = moment_frames["top"]
-                        top_buf["time"] = get_format_date(date_format="%Y-%m-%dT%H:%M:%S")
+                        top_buf["time"] = time_zone(tm=3)
 
                         print("time from the top", top_buf["time"])
                         print("wagon with number, and it goes to the buffer")
