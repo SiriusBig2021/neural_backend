@@ -72,11 +72,11 @@ class FENN(CNN):
             nn.MaxPool2d(2, 2),
 
             nn.Flatten(),
-            nn.Linear(self.input_shape[1] * 2 * 16 * 16, 1024),
+            nn.Linear(self.input_shape[1] * 2 * 16 * 16, 256),
             nn.ReLU(),
-            nn.Linear(1024, 512),
+            nn.Linear(256, 128),
             nn.ReLU(),
-            nn.Linear(512, len(classes))
+            nn.Linear(128, len(classes))
         )
         summary(self, self.input_shape)
 
