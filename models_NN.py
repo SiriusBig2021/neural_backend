@@ -430,7 +430,7 @@ function add information in queue, which is linked main process with collateral 
 function for cycle reading from the queue and sending information in FireBase (with help Firebase module)
         """
         self.DC = DataComposer()
-        self.DC.CreateCurrentShift()
+        # self.DC.CreateCurrentShift()
         try:
             while True:
                     if not(self.q.empty()):
@@ -496,4 +496,8 @@ def time_zone(tm=3):
     hours = int(time[11:13]) + tm
     if hours >= 24:
         hours -= 24
-    return time.replace(time[11:14], f'{hours}:', 1)
+    hours = str(hours)
+    if len(hours) != 2:
+        return time.replace(time[11:14], f'0{hours}:', 1)
+    else:
+        return time.replace(time[11:14], f'{hours}:', 1)

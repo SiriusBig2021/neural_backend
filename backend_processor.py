@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
                         #################--Drawing_bbox--#################################
                         text = ocr_handler["number"]
-                        cv2.putText(ocr_handler["frame"], movement_direct, (30, 40), fontFace, fontScale, color, thickness)
+                        cv2.putText(ocr_handler["frame"], movement_direct, (30, 200), fontFace, fontScale, color, thickness)
                         cv2.putText(top_buf["frame"], top_buf["time"], (30, 40), fontFace, fontScale, color, thickness)
                         ##################################################################
 

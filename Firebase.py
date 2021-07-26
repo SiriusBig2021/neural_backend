@@ -26,8 +26,8 @@ class DataComposer:
         })
         self.db = firestore.client()
 
-    def getCurrentShift(self):
-        currentTime = datetime.now()
+    def getCurrentShift(self,curTime):
+        currentTime = curTime
         shiftType = None
 
         if is_time_between(time(7, 30), time(19, 30), currentTime.time()):
@@ -44,21 +44,21 @@ class DataComposer:
             u'type': shiftType
         }
 
-    def CreateCurrentShift(self):
-        """
-        Call this method to create current shift if it doesn't exist
-        """
-        shift = self.getCurrentShift()
-
-        shift_DT = shift['dt']
-        shift_type = shift['type']
-
-        # запись данных в базу:
-        doc_ref = self.db.collection(u'shift').document(shift_DT)
-        doc_ref.set({
-            u'date': shift_DT,
-            u'type': shift_type
-        })
+    # def CreateCurrentShift(self):
+    #     """
+    #     Call this method to create current shift if it doesn't exist
+    #     """
+    #     shift = self.getCurrentShift()
+    #
+    #     shift_DT = shift['dt']
+    #     shift_type = shift['type']
+    #
+    #     # запись данных в базу:
+    #     doc_ref = self.db.collection(u'shift').document(shift_DT)
+    #     doc_ref.set({
+    #         u'date': shift_DT,
+    #         u'type': shift_type
+    #     })
 
     def AddEvent(self, event_Datetime, event_Type, event_wagon, event_trainID, event_State, event_frames):
         """
@@ -73,7 +73,7 @@ class DataComposer:
                 u'imagePath': 'DatasetUtils/index.jpeg' # path yo local image
             })
         """
-        shift = self.getCurrentShift()
+        shift = self.getCurrentShift(event_Datetime)
         shift_DT = shift['dt']
 
         eDT = event_Datetime
