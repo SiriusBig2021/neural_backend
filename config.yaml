@@ -41,19 +41,19 @@ Ocr:
     gpu: False
     type: rtsp  # only rtsp
 
-Cut_cord:  #
+Cut_cord:  # [(660, 360), (1060, 240), (1040, 500), (680, 720)]
     -
-        - 0
-        - 249
+        - 660
+        - 360
     -
-        - 1296
-        - 249
+        - 1060
+        - 240
     -
-        - 1296
-        - 1065
+        - 1040
+        - 500
     -
-        - 0
-        - 1065
+        - 680
+        - 720
 
 Max_wait_iteration: 4
 
@@ -71,3 +71,4 @@ Image:
     thickness: 2
 
 Time_zone: 3
+Ocr_type: Our_OCR # Our_OCR or EasyOCR

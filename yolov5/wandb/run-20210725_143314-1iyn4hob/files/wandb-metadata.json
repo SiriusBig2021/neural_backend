@@ -1,0 +1,24 @@
+{
+    "os": "Linux-5.4.0-80-generic-x86_64-with-glibc2.27",
+    "python": "3.8.10",
+    "heartbeatAt": "2021-07-25T11:33:15.856997",
+    "startedAt": "2021-07-25T11:33:14.182758",
+    "docker": null,
+    "gpu": "NVIDIA GeForce GTX 1070",
+    "gpu_count": 1,
+    "cpu_count": 12,
+    "cuda": "10.0.130",
+    "args": [],
+    "state": "running",
+    "program": "train.py",
+    "codePath": "train.py",
+    "git": {
+        "remote": "https://github.com/ultralytics/yolov5.git",
+        "commit": "88b1945241dd0ef491da2ae0ce89f15ab67733e9"
+    },
+    "email": "evgp008@gmail.com",
+    "root": "/home/ea/projects/yolov5",
+    "host": "ea-home",
+    "username": "ea",
+    "executable": "/home/ea/.virtualenvs/torch1.81/bin/python"
+}

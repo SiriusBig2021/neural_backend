@@ -1,0 +1,89 @@
+2021-06-13 11:17:27,114 INFO    MainThread:26878 [internal.py:wandb_internal():88] W&B internal server running at pid: 26878, started at: 2021-06-13 11:17:27.114368
+2021-06-13 11:17:27,117 INFO    WriterThread:26878 [datastore.py:open_for_write():80] open: /home/ea/projects/yolov5/wandb/run-20210613_111725-1va9h5zt/run-1va9h5zt.wandb
+2021-06-13 11:17:27,117 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: check_version
+2021-06-13 11:17:27,120 DEBUG   SenderThread:26878 [sender.py:send():179] send: header
+2021-06-13 11:17:27,120 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: check_version
+2021-06-13 11:17:27,328 DEBUG   SenderThread:26878 [sender.py:send():179] send: run
+2021-06-13 11:17:27,358 INFO    SenderThread:26878 [sender.py:_maybe_setup_resume():401] checking resume status for None/YOLOv5/1va9h5zt
+2021-06-13 11:17:27,940 INFO    SenderThread:26878 [dir_watcher.py:__init__():168] watching files in: /home/ea/projects/yolov5/wandb/run-20210613_111725-1va9h5zt/files
+2021-06-13 11:17:27,941 INFO    SenderThread:26878 [sender.py:_start_run_threads():704] run started: 1va9h5zt with start time 1623572245
+2021-06-13 11:17:28,018 DEBUG   SenderThread:26878 [sender.py:send():179] send: summary
+2021-06-13 11:17:28,019 INFO    SenderThread:26878 [sender.py:_save_file():829] saving file wandb-summary.json with policy end
+2021-06-13 11:17:28,022 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: run_start
+2021-06-13 11:17:28,027 DEBUG   HandlerThread:26878 [meta.py:__init__():39] meta init
+2021-06-13 11:17:28,027 DEBUG   HandlerThread:26878 [meta.py:__init__():53] meta init done
+2021-06-13 11:17:28,027 DEBUG   HandlerThread:26878 [meta.py:probe():210] probe
+2021-06-13 11:17:28,034 DEBUG   HandlerThread:26878 [meta.py:_setup_git():200] setup git
+2021-06-13 11:17:28,047 DEBUG   HandlerThread:26878 [meta.py:_setup_git():207] setup git done
+2021-06-13 11:17:28,047 DEBUG   HandlerThread:26878 [meta.py:_save_pip():57] save pip
+2021-06-13 11:17:28,048 DEBUG   HandlerThread:26878 [meta.py:_save_pip():71] save pip done
+2021-06-13 11:17:28,048 DEBUG   HandlerThread:26878 [meta.py:probe():252] probe done
+2021-06-13 11:17:28,120 DEBUG   SenderThread:26878 [sender.py:send():179] send: files
+2021-06-13 11:17:28,120 INFO    SenderThread:26878 [sender.py:_save_file():829] saving file wandb-metadata.json with policy now
+2021-06-13 11:17:28,134 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:17:28,134 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:17:28,367 DEBUG   SenderThread:26878 [sender.py:send():179] send: config
+2021-06-13 11:17:28,368 DEBUG   SenderThread:26878 [sender.py:send():179] send: config
+2021-06-13 11:17:28,822 INFO    Thread-16 :26878 [upload_job.py:push():133] Uploaded file /tmp/tmpz9o5vjz_wandb/np8hydcr-wandb-metadata.json
+2021-06-13 11:17:28,959 INFO    Thread-13 :26878 [dir_watcher.py:_on_file_created():216] file/dir created: /home/ea/projects/yolov5/wandb/run-20210613_111725-1va9h5zt/files/requirements.txt
+2021-06-13 11:17:28,961 INFO    Thread-13 :26878 [dir_watcher.py:_on_file_created():216] file/dir created: /home/ea/projects/yolov5/wandb/run-20210613_111725-1va9h5zt/files/wandb-summary.json
+2021-06-13 11:17:28,962 INFO    Thread-13 :26878 [dir_watcher.py:_on_file_created():216] file/dir created: /home/ea/projects/yolov5/wandb/run-20210613_111725-1va9h5zt/files/output.log
+2021-06-13 11:17:28,963 INFO    Thread-13 :26878 [dir_watcher.py:_on_file_created():216] file/dir created: /home/ea/projects/yolov5/wandb/run-20210613_111725-1va9h5zt/files/wandb-metadata.json
+2021-06-13 11:17:29,943 INFO    Thread-13 :26878 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210613_111725-1va9h5zt/files/config.yaml
+2021-06-13 11:17:43,371 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:17:43,372 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:17:56,577 DEBUG   SenderThread:26878 [sender.py:send():179] send: stats
+2021-06-13 11:17:58,650 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:17:58,651 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:18:13,900 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:18:13,901 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:18:27,152 DEBUG   SenderThread:26878 [sender.py:send():179] send: stats
+2021-06-13 11:18:29,158 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:18:29,159 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:18:44,419 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:18:44,419 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:18:57,680 DEBUG   SenderThread:26878 [sender.py:send():179] send: stats
+2021-06-13 11:18:59,666 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:18:59,667 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:19:14,932 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:19:14,933 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:19:28,266 DEBUG   SenderThread:26878 [sender.py:send():179] send: stats
+2021-06-13 11:19:30,203 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:19:30,204 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:19:45,448 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:19:45,449 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:19:58,744 DEBUG   SenderThread:26878 [sender.py:send():179] send: stats
+2021-06-13 11:20:00,701 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:20:00,702 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:20:15,977 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:20:15,978 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:20:29,262 DEBUG   SenderThread:26878 [sender.py:send():179] send: stats
+2021-06-13 11:20:32,919 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:20:32,920 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:20:48,159 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:20:48,160 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:20:59,879 DEBUG   SenderThread:26878 [sender.py:send():179] send: stats
+2021-06-13 11:21:03,430 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:21:03,431 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:21:18,709 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:21:18,710 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:21:30,476 DEBUG   SenderThread:26878 [sender.py:send():179] send: stats
+2021-06-13 11:21:33,971 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:21:33,972 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:21:49,251 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:21:49,252 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:22:01,013 DEBUG   SenderThread:26878 [sender.py:send():179] send: stats
+2021-06-13 11:22:04,523 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:22:04,524 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:22:19,778 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:22:19,778 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:22:31,615 DEBUG   SenderThread:26878 [sender.py:send():179] send: stats
+2021-06-13 11:22:35,034 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:22:35,035 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:22:50,349 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:22:50,349 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:22:58,342 INFO    Thread-13 :26878 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210613_111725-1va9h5zt/files/output.log
+2021-06-13 11:23:02,228 DEBUG   SenderThread:26878 [sender.py:send():179] send: stats
+2021-06-13 11:23:05,631 DEBUG   HandlerThread:26878 [handler.py:handle_request():124] handle_request: stop_status
+2021-06-13 11:23:05,632 DEBUG   SenderThread:26878 [sender.py:send_request():193] send_request: stop_status
+2021-06-13 11:23:20,262 WARNING MainThread:26878 [internal.py:wandb_internal():147] Internal process interrupt: 1

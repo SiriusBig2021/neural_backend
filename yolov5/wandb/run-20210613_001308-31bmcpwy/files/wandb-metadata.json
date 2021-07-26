@@ -1,0 +1,37 @@
+{
+    "os": "Linux-5.4.0-74-generic-x86_64-with-glibc2.27",
+    "python": "3.8.10",
+    "heartbeatAt": "2021-06-12T21:13:09.660599",
+    "startedAt": "2021-06-12T21:13:08.140506",
+    "docker": null,
+    "gpu": "NVIDIA GeForce GTX 1070",
+    "gpu_count": 1,
+    "cpu_count": 12,
+    "cuda": "10.0.130",
+    "args": [
+        "--batch",
+        "8",
+        "--cfg",
+        "yolov5m.yaml",
+        "--weights",
+        "yolov5m.pt",
+        "--data",
+        "data/PersonHeadDetector.yaml",
+        "--img",
+        "640",
+        "--epochs",
+        "300"
+    ],
+    "state": "running",
+    "program": "train.py",
+    "codePath": "train.py",
+    "git": {
+        "remote": "https://github.com/ultralytics/yolov5.git",
+        "commit": "88b1945241dd0ef491da2ae0ce89f15ab67733e9"
+    },
+    "email": "evgp008@gmail.com",
+    "root": "/home/ea/projects/yolov5",
+    "host": "ea-home",
+    "username": "ea",
+    "executable": "/home/ea/.virtualenvs/torch1.81/bin/python"
+}

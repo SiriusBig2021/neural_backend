@@ -1,0 +1,209 @@
+2021-07-25 14:33:51,222 INFO    MainThread:16117 [internal.py:wandb_internal():88] W&B internal server running at pid: 16117, started at: 2021-07-25 14:33:51.222363
+2021-07-25 14:33:51,224 DEBUG   HandlerThread:16117 [handler.py:handle_request():124] handle_request: check_version
+2021-07-25 14:33:51,224 INFO    WriterThread:16117 [datastore.py:open_for_write():80] open: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/run-3w0wmlfo.wandb
+2021-07-25 14:33:51,225 DEBUG   SenderThread:16117 [sender.py:send():179] send: header
+2021-07-25 14:33:51,225 DEBUG   SenderThread:16117 [sender.py:send_request():193] send_request: check_version
+2021-07-25 14:33:51,509 DEBUG   SenderThread:16117 [sender.py:send():179] send: run
+2021-07-25 14:33:51,539 INFO    SenderThread:16117 [sender.py:_maybe_setup_resume():401] checking resume status for None/YOLOv5/3w0wmlfo
+2021-07-25 14:33:52,490 INFO    SenderThread:16117 [dir_watcher.py:__init__():168] watching files in: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files
+2021-07-25 14:33:52,490 INFO    SenderThread:16117 [sender.py:_start_run_threads():704] run started: 3w0wmlfo with start time 1627212830
+2021-07-25 14:33:52,494 DEBUG   SenderThread:16117 [sender.py:send():179] send: summary
+2021-07-25 14:33:52,494 INFO    SenderThread:16117 [sender.py:_save_file():829] saving file wandb-summary.json with policy end
+2021-07-25 14:33:52,495 DEBUG   HandlerThread:16117 [handler.py:handle_request():124] handle_request: run_start
+2021-07-25 14:33:52,498 DEBUG   HandlerThread:16117 [meta.py:__init__():39] meta init
+2021-07-25 14:33:52,499 DEBUG   HandlerThread:16117 [meta.py:__init__():53] meta init done
+2021-07-25 14:33:52,499 DEBUG   HandlerThread:16117 [meta.py:probe():210] probe
+2021-07-25 14:33:52,505 DEBUG   HandlerThread:16117 [meta.py:_setup_git():200] setup git
+2021-07-25 14:33:52,516 DEBUG   HandlerThread:16117 [meta.py:_setup_git():207] setup git done
+2021-07-25 14:33:52,516 DEBUG   HandlerThread:16117 [meta.py:_save_pip():57] save pip
+2021-07-25 14:33:52,517 DEBUG   HandlerThread:16117 [meta.py:_save_pip():71] save pip done
+2021-07-25 14:33:52,517 DEBUG   HandlerThread:16117 [meta.py:probe():252] probe done
+2021-07-25 14:33:52,556 DEBUG   SenderThread:16117 [sender.py:send():179] send: files
+2021-07-25 14:33:52,556 INFO    SenderThread:16117 [sender.py:_save_file():829] saving file wandb-metadata.json with policy now
+2021-07-25 14:33:52,559 DEBUG   HandlerThread:16117 [handler.py:handle_request():124] handle_request: stop_status
+2021-07-25 14:33:52,560 DEBUG   SenderThread:16117 [sender.py:send_request():193] send_request: stop_status
+2021-07-25 14:33:52,988 DEBUG   SenderThread:16117 [sender.py:send():179] send: config
+2021-07-25 14:33:52,988 DEBUG   SenderThread:16117 [sender.py:send():179] send: config
+2021-07-25 14:33:53,491 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_created():216] file/dir created: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/wandb-metadata.json
+2021-07-25 14:33:53,491 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_created():216] file/dir created: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/requirements.txt
+2021-07-25 14:33:53,491 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_created():216] file/dir created: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/wandb-summary.json
+2021-07-25 14:33:53,492 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_created():216] file/dir created: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:33:53,497 INFO    Thread-11 :16117 [upload_job.py:push():133] Uploaded file /tmp/tmp9uvx7qwhwandb/jlfxm5hh-wandb-metadata.json
+2021-07-25 14:33:54,491 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/config.yaml
+2021-07-25 14:33:57,492 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:33:59,493 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:01,493 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:03,494 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:05,494 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:07,495 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:09,177 DEBUG   HandlerThread:16117 [handler.py:handle_request():124] handle_request: stop_status
+2021-07-25 14:34:09,177 DEBUG   SenderThread:16117 [sender.py:send_request():193] send_request: stop_status
+2021-07-25 14:34:09,496 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:11,496 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:13,497 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:15,498 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:17,498 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:18,316 DEBUG   SenderThread:16117 [sender.py:send():179] send: files
+2021-07-25 14:34:18,316 INFO    SenderThread:16117 [sender.py:_save_file():829] saving file media/images/Labels_0_0.jpg with policy now
+2021-07-25 14:34:18,317 DEBUG   SenderThread:16117 [sender.py:send():179] send: files
+2021-07-25 14:34:18,317 INFO    SenderThread:16117 [sender.py:_save_file():829] saving file media/images/Labels_0_1.jpg with policy now
+2021-07-25 14:34:18,317 DEBUG   SenderThread:16117 [sender.py:send():179] send: files
+2021-07-25 14:34:18,317 INFO    SenderThread:16117 [sender.py:_save_file():829] saving file media/images/Mosaics_0_0.jpg with policy now
+2021-07-25 14:34:18,318 DEBUG   SenderThread:16117 [sender.py:send():179] send: files
+2021-07-25 14:34:18,322 INFO    SenderThread:16117 [sender.py:_save_file():829] saving file media/images/Mosaics_0_1.jpg with policy now
+2021-07-25 14:34:18,324 DEBUG   SenderThread:16117 [sender.py:send():179] send: files
+2021-07-25 14:34:18,324 INFO    SenderThread:16117 [sender.py:_save_file():829] saving file media/images/Mosaics_0_2.jpg with policy now
+2021-07-25 14:34:18,324 DEBUG   SenderThread:16117 [sender.py:send():179] send: history
+2021-07-25 14:34:18,324 DEBUG   SenderThread:16117 [sender.py:send():179] send: summary
+2021-07-25 14:34:18,325 INFO    SenderThread:16117 [sender.py:_save_file():829] saving file wandb-summary.json with policy end
+2021-07-25 14:34:18,499 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/wandb-summary.json
+2021-07-25 14:34:18,499 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_created():216] file/dir created: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/media/images/Labels_0_1.jpg
+2021-07-25 14:34:18,499 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_created():216] file/dir created: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/media/images/Mosaics_0_0.jpg
+2021-07-25 14:34:18,499 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_created():216] file/dir created: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/media/images/Labels_0_0.jpg
+2021-07-25 14:34:18,500 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_created():216] file/dir created: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/media/images/Mosaics_0_1.jpg
+2021-07-25 14:34:18,500 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_created():216] file/dir created: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/media/images/Mosaics_0_2.jpg
+2021-07-25 14:34:18,500 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_created():216] file/dir created: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/media/images
+2021-07-25 14:34:18,500 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_created():216] file/dir created: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/media
+2021-07-25 14:34:19,499 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:19,710 INFO    Thread-15 :16117 [upload_job.py:push():133] Uploaded file /tmp/tmp9uvx7qwhwandb/13bd8k5g-media/images/Mosaics_0_1.jpg
+2021-07-25 14:34:19,765 INFO    Thread-12 :16117 [upload_job.py:push():133] Uploaded file /tmp/tmp9uvx7qwhwandb/19gglgmf-media/images/Labels_0_0.jpg
+2021-07-25 14:34:19,765 INFO    Thread-16 :16117 [upload_job.py:push():133] Uploaded file /tmp/tmp9uvx7qwhwandb/2h984vf7-media/images/Mosaics_0_2.jpg
+2021-07-25 14:34:19,791 INFO    Thread-13 :16117 [upload_job.py:push():133] Uploaded file /tmp/tmp9uvx7qwhwandb/2tsm3cxp-media/images/Labels_0_1.jpg
+2021-07-25 14:34:20,881 DEBUG   SenderThread:16117 [sender.py:send():179] send: stats
+2021-07-25 14:34:21,500 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:22,582 INFO    Thread-14 :16117 [upload_job.py:push():133] Uploaded file /tmp/tmp9uvx7qwhwandb/1h4zs0v2-media/images/Mosaics_0_0.jpg
+2021-07-25 14:34:23,501 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:24,581 DEBUG   HandlerThread:16117 [handler.py:handle_request():124] handle_request: stop_status
+2021-07-25 14:34:24,581 DEBUG   SenderThread:16117 [sender.py:send_request():193] send_request: stop_status
+2021-07-25 14:34:25,501 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:27,502 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:29,503 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:29,781 DEBUG   SenderThread:16117 [sender.py:send():179] send: history
+2021-07-25 14:34:29,781 DEBUG   SenderThread:16117 [sender.py:send():179] send: summary
+2021-07-25 14:34:29,781 INFO    SenderThread:16117 [sender.py:_save_file():829] saving file wandb-summary.json with policy end
+2021-07-25 14:34:30,503 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/wandb-summary.json
+2021-07-25 14:34:31,504 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:33,504 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:35,505 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:37,506 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:39,507 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:40,041 DEBUG   HandlerThread:16117 [handler.py:handle_request():124] handle_request: stop_status
+2021-07-25 14:34:40,041 DEBUG   SenderThread:16117 [sender.py:send_request():193] send_request: stop_status
+2021-07-25 14:34:41,507 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:41,602 DEBUG   SenderThread:16117 [sender.py:send():179] send: history
+2021-07-25 14:34:41,602 DEBUG   SenderThread:16117 [sender.py:send():179] send: summary
+2021-07-25 14:34:41,602 INFO    SenderThread:16117 [sender.py:_save_file():829] saving file wandb-summary.json with policy end
+2021-07-25 14:34:42,509 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/wandb-summary.json
+2021-07-25 14:34:43,509 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:45,510 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:47,510 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:49,511 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:51,176 DEBUG   SenderThread:16117 [sender.py:send():179] send: stats
+2021-07-25 14:34:51,512 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:53,512 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:55,157 DEBUG   SenderThread:16117 [sender.py:send():179] send: history
+2021-07-25 14:34:55,157 DEBUG   SenderThread:16117 [sender.py:send():179] send: summary
+2021-07-25 14:34:55,158 INFO    SenderThread:16117 [sender.py:_save_file():829] saving file wandb-summary.json with policy end
+2021-07-25 14:34:55,513 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/wandb-summary.json
+2021-07-25 14:34:55,514 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:55,570 DEBUG   HandlerThread:16117 [handler.py:handle_request():124] handle_request: stop_status
+2021-07-25 14:34:55,571 DEBUG   SenderThread:16117 [sender.py:send_request():193] send_request: stop_status
+2021-07-25 14:34:57,514 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:34:59,515 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:01,516 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:03,516 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:05,517 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:07,518 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:08,148 DEBUG   SenderThread:16117 [sender.py:send():179] send: history
+2021-07-25 14:35:08,149 DEBUG   SenderThread:16117 [sender.py:send():179] send: summary
+2021-07-25 14:35:08,149 INFO    SenderThread:16117 [sender.py:_save_file():829] saving file wandb-summary.json with policy end
+2021-07-25 14:35:08,518 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/wandb-summary.json
+2021-07-25 14:35:09,519 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:11,067 DEBUG   HandlerThread:16117 [handler.py:handle_request():124] handle_request: stop_status
+2021-07-25 14:35:11,067 DEBUG   SenderThread:16117 [sender.py:send_request():193] send_request: stop_status
+2021-07-25 14:35:11,519 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:13,520 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:15,521 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:17,521 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:19,522 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:20,719 DEBUG   SenderThread:16117 [sender.py:send():179] send: history
+2021-07-25 14:35:20,719 DEBUG   SenderThread:16117 [sender.py:send():179] send: summary
+2021-07-25 14:35:20,720 INFO    SenderThread:16117 [sender.py:_save_file():829] saving file wandb-summary.json with policy end
+2021-07-25 14:35:21,448 DEBUG   SenderThread:16117 [sender.py:send():179] send: stats
+2021-07-25 14:35:21,524 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/wandb-summary.json
+2021-07-25 14:35:21,524 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:23,524 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:25,525 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:26,536 DEBUG   HandlerThread:16117 [handler.py:handle_request():124] handle_request: stop_status
+2021-07-25 14:35:26,537 DEBUG   SenderThread:16117 [sender.py:send_request():193] send_request: stop_status
+2021-07-25 14:35:27,526 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:29,526 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:31,527 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:33,215 DEBUG   SenderThread:16117 [sender.py:send():179] send: history
+2021-07-25 14:35:33,215 DEBUG   SenderThread:16117 [sender.py:send():179] send: summary
+2021-07-25 14:35:33,216 INFO    SenderThread:16117 [sender.py:_save_file():829] saving file wandb-summary.json with policy end
+2021-07-25 14:35:33,528 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/wandb-summary.json
+2021-07-25 14:35:33,528 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:35,528 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:37,529 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:39,530 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:41,530 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:42,201 DEBUG   HandlerThread:16117 [handler.py:handle_request():124] handle_request: stop_status
+2021-07-25 14:35:42,201 DEBUG   SenderThread:16117 [sender.py:send_request():193] send_request: stop_status
+2021-07-25 14:35:43,531 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:45,000 DEBUG   SenderThread:16117 [sender.py:send():179] send: history
+2021-07-25 14:35:45,000 DEBUG   SenderThread:16117 [sender.py:send():179] send: summary
+2021-07-25 14:35:45,000 INFO    SenderThread:16117 [sender.py:_save_file():829] saving file wandb-summary.json with policy end
+2021-07-25 14:35:45,532 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/wandb-summary.json
+2021-07-25 14:35:45,532 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:47,532 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:49,533 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:51,534 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:51,739 DEBUG   SenderThread:16117 [sender.py:send():179] send: stats
+2021-07-25 14:35:53,534 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:55,535 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:56,648 DEBUG   SenderThread:16117 [sender.py:send():179] send: history
+2021-07-25 14:35:56,648 DEBUG   SenderThread:16117 [sender.py:send():179] send: summary
+2021-07-25 14:35:56,649 INFO    SenderThread:16117 [sender.py:_save_file():829] saving file wandb-summary.json with policy end
+2021-07-25 14:35:57,536 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/wandb-summary.json
+2021-07-25 14:35:57,536 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:35:57,758 DEBUG   HandlerThread:16117 [handler.py:handle_request():124] handle_request: stop_status
+2021-07-25 14:35:57,758 DEBUG   SenderThread:16117 [sender.py:send_request():193] send_request: stop_status
+2021-07-25 14:35:59,536 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:36:01,537 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:36:03,538 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:36:05,539 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:36:07,539 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:36:08,460 DEBUG   SenderThread:16117 [sender.py:send():179] send: history
+2021-07-25 14:36:08,461 DEBUG   SenderThread:16117 [sender.py:send():179] send: summary
+2021-07-25 14:36:08,461 INFO    SenderThread:16117 [sender.py:_save_file():829] saving file wandb-summary.json with policy end
+2021-07-25 14:36:08,539 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/wandb-summary.json
+2021-07-25 14:36:09,540 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:36:11,540 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:36:13,162 DEBUG   HandlerThread:16117 [handler.py:handle_request():124] handle_request: stop_status
+2021-07-25 14:36:13,162 DEBUG   SenderThread:16117 [sender.py:send_request():193] send_request: stop_status
+2021-07-25 14:36:13,541 INFO    Thread-8  :16117 [dir_watcher.py:_on_file_modified():229] file/dir modified: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:36:13,762 WARNING MainThread:16117 [internal.py:wandb_internal():147] Internal process interrupt: 1
+2021-07-25 14:36:13,898 WARNING MainThread:16117 [internal.py:wandb_internal():147] Internal process interrupt: 2
+2021-07-25 14:36:13,899 ERROR   MainThread:16117 [internal.py:wandb_internal():150] Internal process interrupted.
+2021-07-25 14:36:13,972 INFO    WriterThread:16117 [datastore.py:close():288] close: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/run-3w0wmlfo.wandb
+2021-07-25 14:36:14,586 INFO    SenderThread:16117 [sender.py:finish():933] shutting down sender
+2021-07-25 14:36:14,586 INFO    SenderThread:16117 [dir_watcher.py:finish():282] shutting down directory watcher
+2021-07-25 14:36:15,543 INFO    SenderThread:16117 [dir_watcher.py:finish():312] scan: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files
+2021-07-25 14:36:15,544 INFO    SenderThread:16117 [dir_watcher.py:finish():318] scan save: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log output.log
+2021-07-25 14:36:15,544 INFO    SenderThread:16117 [dir_watcher.py:finish():318] scan save: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/requirements.txt requirements.txt
+2021-07-25 14:36:15,553 INFO    SenderThread:16117 [dir_watcher.py:finish():318] scan save: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/wandb-summary.json wandb-summary.json
+2021-07-25 14:36:15,560 INFO    SenderThread:16117 [dir_watcher.py:finish():318] scan save: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/config.yaml config.yaml
+2021-07-25 14:36:15,560 INFO    SenderThread:16117 [dir_watcher.py:finish():318] scan save: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/wandb-metadata.json wandb-metadata.json
+2021-07-25 14:36:15,560 INFO    SenderThread:16117 [dir_watcher.py:finish():318] scan save: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/media/images/Mosaics_0_1.jpg media/images/Mosaics_0_1.jpg
+2021-07-25 14:36:15,560 INFO    SenderThread:16117 [dir_watcher.py:finish():318] scan save: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/media/images/Mosaics_0_0.jpg media/images/Mosaics_0_0.jpg
+2021-07-25 14:36:15,562 INFO    SenderThread:16117 [dir_watcher.py:finish():318] scan save: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/media/images/Mosaics_0_2.jpg media/images/Mosaics_0_2.jpg
+2021-07-25 14:36:15,562 INFO    SenderThread:16117 [dir_watcher.py:finish():318] scan save: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/media/images/Labels_0_0.jpg media/images/Labels_0_0.jpg
+2021-07-25 14:36:15,562 INFO    SenderThread:16117 [dir_watcher.py:finish():318] scan save: /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/media/images/Labels_0_1.jpg media/images/Labels_0_1.jpg
+2021-07-25 14:36:15,564 INFO    SenderThread:16117 [file_pusher.py:finish():176] shutting down file pusher
+2021-07-25 14:36:15,565 INFO    SenderThread:16117 [file_pusher.py:join():181] waiting for file pusher
+2021-07-25 14:36:16,596 INFO    Thread-19 :16117 [upload_job.py:push():133] Uploaded file /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/wandb-summary.json
+2021-07-25 14:36:16,604 INFO    Thread-20 :16117 [upload_job.py:push():133] Uploaded file /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/config.yaml
+2021-07-25 14:36:16,618 INFO    Thread-17 :16117 [upload_job.py:push():133] Uploaded file /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/output.log
+2021-07-25 14:36:16,723 INFO    Thread-18 :16117 [upload_job.py:push():133] Uploaded file /home/ea/projects/yolov5/wandb/run-20210725_143350-3w0wmlfo/files/requirements.txt
+2021-07-25 14:36:17,887 INFO    MainThread:16117 [internal.py:handle_exit():78] Internal process exited

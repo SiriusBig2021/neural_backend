@@ -1,6 +1,6 @@
 import time as tm
 from DenseOpticalFlow import DenseOpticalFlow
-from models import OCRReader, FENN, FB_send, Config, time_zone
+from models_NN import OCRReader, FENN, FB_send, Config, time_zone
 from utils import *
 import torch
 
@@ -26,10 +26,11 @@ fontScale = cfg.fontScale
 color = cfg.color
 thickness = cfg.thickness
 plus_tm = cfg.time_zone
+nn_type = cfg.nn_type
 # """
 ############################################################################################
 ##########--initialization--################################################################
-ocr = OCRReader(type=ocr_type, gpu=ocr_gpu)
+ocr = OCRReader(type=ocr_type, gpu=ocr_gpu, nn=nn_type)   #TODO [][][][][][][][][][][][][][][][][][][][]
 op = DenseOpticalFlow(opt_param)
 
 model1 = FENN(input_shape=NN_full_empty_cfg["input_shape"], classes=NN_full_empty_cfg["classes"], deviceType=NN_full_empty_cfg["device"])
@@ -38,9 +39,6 @@ model2 = FENN(input_shape=NN_train_cfg["input_shape"], classes=NN_train_cfg["cla
 model2.load_state_dict(torch.load(NN_train_cfg["pathToWeights"]))
 
 firebase = FB_send()
-#TODO --------------------------------------------
-#TODO необходимо создавать вначале смены + trainID
-#TODO --------------------------------------------
 ############################################################################################
 
 if __name__ == "__main__":
@@ -72,10 +70,8 @@ if __name__ == "__main__":
                 continue
             else:
                 now_time = tm.localtime()
-                # TODO train id -------------------------------------------------------
                 if (now_time.tm_hour == 7 and now_time.tm_min == 30) or (now_time.tm_hour == 19 and now_time.tm_min == 30):
                     train_id = 0
-                # TODO nn here --------------------------------------------------------
                 predict2 = model2.predict(moment_frames["mid1"]["frame"])
                 predict_class_2, predict_prob_2 = predict2["className"], predict2["accuracy"],
                 if predict_class_2 != 'Train':
