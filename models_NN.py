@@ -440,7 +440,9 @@ function for cycle reading from the queue and sending information in FireBase (w
                                          out["number"],
                                          out["trainID"],
                                          out["state"],
-                                         out["event_frames"]
+                                         out["event_frames"],
+                                         out["event_shift"],
+                                         out["shift_time"]
                                         )
                         #print('info has been sanded')
         except:

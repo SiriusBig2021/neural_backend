@@ -4,6 +4,7 @@ from firebase_admin import firestore
 from firebase_admin import storage
 
 from datetime import datetime, time
+import dateutil.parser
 
 
 
@@ -26,41 +27,41 @@ class DataComposer:
         })
         self.db = firestore.client()
 
-    def getCurrentShift(self,curTime):
-        currentTime = curTime
-        shiftType = None
+    def getCurrentShift(self,curTime, shift):
+        currentShift_DT = curTime
+        shiftType = shift
 
-        if is_time_between(time(7, 30), time(19, 30), currentTime.time()):
-            currentShift_DT = currentTime.replace(microsecond=0).replace(hour=7).replace(minute=30).replace(
-                second=0).isoformat()
-            shiftType = 'Day'
-        else:
-            currentShift_DT = currentTime.replace(microsecond=0).replace(hour=19).replace(minute=30).replace(
-                second=0).isoformat()
-            shiftType = 'Night'
+        # if is_time_between(time(7, 30), time(19, 30), currentTime.time()):
+        #     currentShift_DT = currentTime.replace(microsecond=0).replace(hour=7).replace(minute=30).replace(
+        #         second=0).isoformat()
+        #     shiftType = 'Day'
+        # else:
+        #     currentShift_DT = currentTime.replace(microsecond=0).replace(hour=19).replace(minute=30).replace(
+        #         second=0).isoformat()
+        #     shiftType = 'Night'
 
         return {
             u'dt': currentShift_DT,
             u'type': shiftType
         }
 
-    # def CreateCurrentShift(self):
-    #     """
-    #     Call this method to create current shift if it doesn't exist
-    #     """
-    #     shift = self.getCurrentShift()
-    #
-    #     shift_DT = shift['dt']
-    #     shift_type = shift['type']
-    #
-    #     # запись данных в базу:
-    #     doc_ref = self.db.collection(u'shift').document(shift_DT)
-    #     doc_ref.set({
-    #         u'date': shift_DT,
-    #         u'type': shift_type
-    #     })
+    def CreateCurrentShift(self):
+        """
+        Call this method to create current shift if it doesn't exist
+        """
+        shift = self.getCurrentShift()
 
-    def AddEvent(self, event_Datetime, event_Type, event_wagon, event_trainID, event_State, event_frames):
+        shift_DT = shift['dt']
+        shift_type = shift['type']
+
+        # запись данных в базу:
+        doc_ref = self.db.collection(u'shift').document(shift_DT)
+        doc_ref.set({
+            u'date': shift_DT,
+            u'type': shift_type
+        })
+
+    def AddEvent(self, event_Datetime, event_Type, event_wagon, event_trainID, event_State, event_frames, event_shift, shift_time):
         """
 
         @param event_Datetime: DateTime in ISO format (datetime, example: )
@@ -73,8 +74,15 @@ class DataComposer:
                 u'imagePath': 'DatasetUtils/index.jpeg' # path yo local image
             })
         """
-        shift = self.getCurrentShift(event_Datetime)
-        shift_DT = shift['dt']
+        currentTime = dateutil.parser.isoparse(event_Datetime)
+        if is_time_between(time(7, 30), time(19, 30), currentTime.time()):
+            shift_DT = currentTime.replace(microsecond=0).replace(hour=7).replace(minute=30).replace(
+                second=0).isoformat()
+            shiftType = 'Day'
+        else:
+            shift_DT = currentTime.replace(microsecond=0).replace(hour=19).replace(minute=30).replace(
+                second=0).isoformat()
+            shiftType = 'Night'
 
         eDT = event_Datetime
         eType = event_Type or 'n/a'
@@ -89,6 +97,12 @@ class DataComposer:
             url = self.uploadImage(cameraImagePath, shift_DT+"/"+cameraName+"_"+eDT)
             eFrames.append(url)
 
+        doc_ref_shift = self.db.collection(u'shift').document(shift_DT)
+        doc_ref_shift.set({
+            u'date': shift_DT,
+            u'type': event_shift
+        })
+
         doc_ref = self.db.collection(u'shift').document(shift_DT).collection(u'events').document(eDT)
         doc_ref.set({
             u'frames': eFrames,
@@ -97,6 +111,8 @@ class DataComposer:
             u'wagon': eWagon,
             u'train_id': eTrainID
         })
+        print("\n Done writing event to DB")
+
 
     def uploadImage(self, image_path, image_name):
         # Put your local file path

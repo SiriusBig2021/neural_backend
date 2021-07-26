@@ -50,6 +50,8 @@ if __name__ == "__main__":
         train_here = False
         train_id = 0
         counter_tumb = False
+        shift_time = time_zone(tm=plus_tm)
+        shift = 'Day'
 
         while True:
             moment_frames = {}
@@ -69,9 +71,15 @@ if __name__ == "__main__":
             if "mid1" and "top" not in moment_frames:
                 continue
             else:
-                now_time = tm.localtime()
-                if (now_time.tm_hour == 7 and now_time.tm_min == 30) or (now_time.tm_hour == 19 and now_time.tm_min == 30):
+                now_time = time_zone(tm=plus_tm)
+                if (now_time[11:13] == "07" and now_time[14:16] == "30"):
                     train_id = 0
+                    shift = 'Day'
+                    shift_time = now_time
+                elif (now_time[11:13] == 19 and now_time[14:16] == 30):
+                    train_id = 0
+                    shift = 'Night'
+                    shift_time = now_time
                 predict2 = model2.predict(moment_frames["mid1"]["frame"])
                 predict_class_2, predict_prob_2 = predict2["className"], predict2["accuracy"],
                 if predict_class_2 != 'Train':
@@ -119,6 +127,8 @@ if __name__ == "__main__":
                         ##################################################################
 
                         event = {
+                            "shift_time": shift_time,
+                            "event_shift": shift,
                             "time": top_buf["time"],
                             "direction": "arrive" if top_buf["direction"] == "left" else "departure",
                             "number": text,
